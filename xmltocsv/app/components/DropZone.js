@@ -143,8 +143,8 @@ const DropZone = ({ data, dispatch }) => {
       )}
         {link && (
           <>
-          <a href={link} target="_blank">View JSON</a>
-          <a href={link} download={download}>Download JSON</a>
+          <a href={link} target="_blank">Download CSV</a>
+          {/* <a href={link} download={download}>Download JSON</a> */}
           </>
         )}
     </>
