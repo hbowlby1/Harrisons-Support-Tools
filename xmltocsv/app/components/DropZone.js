@@ -9,7 +9,7 @@ import styles from "../styles/DropZone.module.css";
 
 const DropZone = ({ data, dispatch }) => {
   const [link, setLink] = useState();
-  const [download, setDownload] = useState();
+  //const [download, setDownload] = useState();
   //onDragEnter sets inDropZone to true
   const handleDragEnter = (e) => {
     e.preventDefault();
@@ -115,6 +115,7 @@ const DropZone = ({ data, dispatch }) => {
   };
   return (
     <>
+      <h1 className={styles.title}>Upload XML file(s) here.</h1>
       <div
         className={styles.dropzone}
         onDragEnter={(e) => handleDragEnter(e)}

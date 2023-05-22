@@ -1,36 +1,48 @@
-"use client"
+"use client";
 
-import { useReducer } from 'react';
-import styles from './page.module.css'
-// import fs from "fs";
-// import { parseString } from 'xml2js';
+//next.js imports
+import Head from "next/head";
+import Link from "next/link";
+//global bootstrap import
+import "bootstrap/dist/css/bootstrap.min.css";
+
+//bootstrap imports
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+
 //component imports
-import DropZone from './components/DropZone';
+import TheNav from "./UI/theNav";
+
+//custom CSS imports
+import styles from "./styles/HomePage.modules.css"
+
 
 export default function Home() {
-
-  //reducer function for state changes
-  const reducer = (state, action) => {
-    switch (action.type){
-      case "SET_IN_DROP_ZONE":
-        return {...state, inDropZone: action.inDropZone}
-      case "ADD_FILE_TO_LIST":
-        return {...state, fileList: state.fileList.concat(action.files)};
-      default:
-        return state
-    }
-  }
-
-  //destructures state and dispatch, sets fileList to empty array
-  const [data, dispatch] = useReducer(reducer, {
-    inDropZone: false,
-    fileList: [],
-  });
-
   return (
-    <main className={styles.main}>
-      <h1>Upload your XML file(s) here.</h1>
-      <DropZone data={data} dispatch={dispatch}/>
-    </main>
-  )
+    <>
+      <Head>
+        <title>Harrison's Support Tools</title>
+        <meta
+          property="og:title"
+          content="Harrison's Support Tools"
+          key="title"
+        />
+      </Head>
+      <TheNav />
+      <main>
+        <Container>
+          <h1 className="title">Apps</h1>
+          <Row>
+            <Col>
+              <Link href="/DropZonePage">
+                <Button>XML to CSV</Button>
+              </Link>
+            </Col>
+          </Row>
+        </Container>
+      </main>
+    </>
+  );
 }

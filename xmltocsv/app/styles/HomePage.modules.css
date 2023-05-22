@@ -1,0 +1,10 @@
+.title{
+    text-align: center;
+    border-bottom: 2px solid black;
+}
+
+.btn{
+    margin: 20px;
+    width: 250px;
+    height: 250px;
+}
