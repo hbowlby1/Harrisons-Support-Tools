@@ -61,7 +61,7 @@ const DropZone = ({ data, dispatch }) => {
   const handleFileSelect = (e) => {
     //get files from event on enter them as an array
     let files = [...e.target.files];
-
+    console.log(files);
     //checks if files are selected.
     if (files && files.length > 0) {
       //loop over files
