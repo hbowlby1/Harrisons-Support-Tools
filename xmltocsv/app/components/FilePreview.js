@@ -9,7 +9,7 @@ const FilePreview = ({fileData}) => {
                 {fileData.fileList.map((f) => {
                     return (
                         <>
-                            <ol>
+                            <ol key={f.index}>
                                 <li key={f.lastModified} className={styles.fileList}>
                                     {/* displays the filename and type */}
                                     <div key={f.name} className={styles.fileName}>

@@ -79,7 +79,7 @@ const DropZone = ({ data, dispatch }) => {
   const uploadFiles = async () => {
     //get files from the fileList array
     let files = data.fileList;
-
+    console.log(files);
     //loop through each file and convert them to JSON
     files.forEach((file) => {
       //initialize FileReader to read the files.
@@ -136,7 +136,7 @@ const DropZone = ({ data, dispatch }) => {
       </div>
 
       {/* pass the selected file or dropped files as props */}
-      <FilePreview fileData={data} />
+      <FilePreview fileData={data}/>
       {data.fileList.length > 0 && (
         <button className={styles.uploadBtn} onClick={uploadFiles}>
           Upload
