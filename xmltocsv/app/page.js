@@ -3,8 +3,6 @@
 //next.js imports
 import Head from "next/head";
 import Link from "next/link";
-//global bootstrap import
-import "bootstrap/dist/css/bootstrap.min.css";
 
 //bootstrap imports
 import Container from "react-bootstrap/Container";
@@ -15,7 +13,7 @@ import Button from "react-bootstrap/Button";
 //component imports
 import TheNav from "./UI/theNav";
 
-//custom CSS imports
+//css imports
 import styles from "./styles/HomePage.modules.css"
 
 
