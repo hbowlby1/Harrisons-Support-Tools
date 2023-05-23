@@ -33,3 +33,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+
+#python and django
+vir
+migrations
+__pycache__
+#sql lite
+db.sqlite3
