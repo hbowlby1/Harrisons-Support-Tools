@@ -13,18 +13,21 @@ import styles from "../styles/TheNav.module.css";
 
 function TheNav() {
   return (
-    <Navbar bg="primary" variant="dark">
-      <Container>
-        <Nav className="me-auto">
-          <Link href="/" className={styles.noUnderline}>
-            <span className={`nav-link`}>Home</span>
-          </Link>
-          <Link href="/DropZonePage" className={styles.noUnderline}>
-          <span className="nav-link">XMLtoCSV</span>
-          </Link>
-        </Nav>
-      </Container>
-    </Navbar>
+    <Container>
+      <Navbar bg="primary" variant="dark" expand="lg">
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto">
+            <Link href="/" className={styles.noUnderline}>
+              <span className={`nav-link`}>Home</span>
+            </Link>
+            <Link href="/DropZonePage" className={styles.noUnderline}>
+              <span className="nav-link">XMLtoCSV</span>
+            </Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
+    </Container>
   );
 }
 

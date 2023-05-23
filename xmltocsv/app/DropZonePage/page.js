@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React from "react";
 import { useReducer } from "react";
@@ -6,6 +6,9 @@ import { useReducer } from "react";
 //component imports
 import DropZone from "../components/DropZone";
 import TheNav from "@/app/UI/theNav";
+
+//bootstrap imports
+import { Container } from "react-bootstrap";
 
 function DropZonePage() {
   //reducer function for state changes
@@ -29,7 +32,9 @@ function DropZonePage() {
     <>
       <TheNav />
       <main>
-        <DropZone data={data} dispatch={dispatch} />
+        <Container>
+          <DropZone data={data} dispatch={dispatch} />
+        </Container>
       </main>
     </>
   );
