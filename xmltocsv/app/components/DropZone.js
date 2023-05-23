@@ -6,9 +6,10 @@ import { json2csv } from "json-2-csv";
 import Image from "next/image";
 import FilePreview from "./FilePreview";
 import styles from "../styles/DropZone.module.css";
+import { Button } from "react-bootstrap";
 
 const DropZone = ({ data, dispatch }) => {
-  const [link, setLink] = useState();
+  const [link, setLink] = useState([]);
   //const [download, setDownload] = useState();
   //onDragEnter sets inDropZone to true
   const handleDragEnter = (e) => {
@@ -61,7 +62,6 @@ const DropZone = ({ data, dispatch }) => {
   const handleFileSelect = (e) => {
     //get files from event on enter them as an array
     let files = [...e.target.files];
-    console.log(files);
     //checks if files are selected.
     if (files && files.length > 0) {
       //loop over files
@@ -79,39 +79,47 @@ const DropZone = ({ data, dispatch }) => {
   const uploadFiles = async () => {
     //get files from the fileList array
     let files = data.fileList;
-    console.log(files);
-    //loop through each file and convert them to JSON
-    files.forEach((file) => {
-      //initialize FileReader to read the files.
-      const reader = new FileReader();
-      //read the files
-      reader.onload = async (e) => {
-        try {
-          //parse the xml to json
-          const jsonObj = await parseStringPromise(e.target.result);
 
-          //flattens the JSON into a less complex file
-          const flatJSON = await flatten(jsonObj)
+    //create an array to store the download links
+    const downloadLinks = [];
 
-          //converts the flatJSON to a CSV file
-          const toCSV = await json2csv(flatJSON)
-          
-          //create blob from json object (for viewing/downloading purposes)
-          const blob = new Blob([toCSV], {type: 'text/csv'})
-          
-          //creates the url for the blob/json file
-          const url = URL.createObjectURL(blob);
+    //loop through each file and convert them to CSV
+    for (const file of files) {
+      try {
+        //initialize FileReader to read the file
+        const reader = new FileReader();
 
-          //Set the href and download attributes
-          setLink(url);
-          setDownload(file.name + 'csv')
+        //read the file
+        reader.onload = async (e) => {
+          try {
+            //parse the XML to JSON
+            const jsonObj = await parseStringPromise(e.target.result);
 
-        } catch (err) {
-          console.log(err);
-        }
-      };
-      reader.readAsText(file);
-    });
+            //flattens the JSON into a less complex structure
+            const flatJSON = flatten(jsonObj);
+
+            //converts the flatJSON to a CSV string
+            const csvString = await json2csv(flatJSON);
+
+            //create blob from CSV string
+            const blob = new Blob([csvString], { type: "text/csv" });
+
+            //create a download link for the file
+            const url = URL.createObjectURL(blob);
+            downloadLinks.push(url);
+
+            //set the download links
+            setLink(downloadLinks);
+          } catch (err) {
+            console.log(err);
+          }
+        };
+
+        reader.readAsText(file);
+      } catch (err) {
+        console.log(err);
+      }
+    }
   };
   return (
     <>
@@ -136,18 +144,27 @@ const DropZone = ({ data, dispatch }) => {
       </div>
 
       {/* pass the selected file or dropped files as props */}
-      <FilePreview fileData={data}/>
+      <FilePreview fileData={data} />
       {data.fileList.length > 0 && (
         <button className={styles.uploadBtn} onClick={uploadFiles}>
           Upload
         </button>
       )}
-        {link && (
-          <>
-          <a href={link} target="_blank">Download CSV</a>
-          {/* <a href={link} download={download}>Download JSON</a> */}
-          </>
-        )}
+      {link.length > 0 && (
+        <>
+          {link.map((downloadLinks, index) => (
+            <a
+              href={downloadLinks}
+              download={`File${index + 1}.csv`}
+              key={index}
+            >
+              <div className={styles.downloadBtns}>
+                <Button>Download {data.fileList[index].name}.csv</Button>
+              </div>
+            </a>
+          ))}
+        </>
+      )}
     </>
   );
 };
