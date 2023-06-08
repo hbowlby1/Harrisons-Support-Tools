@@ -24,6 +24,9 @@ function TheNav() {
             <Link href="/DropZonePage" className={styles.noUnderline}>
               <span className="nav-link">XMLtoCSV</span>
             </Link>
+            <Link href="/ToolingProgram" className={styles.noUnderline}>
+              <span className="nav-link">Tooling Program</span>
+            </Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
