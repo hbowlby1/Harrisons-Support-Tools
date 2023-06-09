@@ -1,8 +1,27 @@
-from django.urls import path
+from django.urls import include, path
+from rest_framework import routers
 
-from . import views
+from .views import (
+    ToolViewSet,
+    MachineViewSet,
+    ManufacturerViewSet,
+    QuantityRequirementsViewSet,
+    ToolTypeViewSet,
+    MaxSharpenViewSet,
+    ServiceViewSet
+)
+
+
+router = routers.DefaultRouter()
+router.register('tools', ToolViewSet)
+router.register('machines', MachineViewSet)
+router.register('manufacturers', ManufacturerViewSet)
+router.register('quantity_requirements', QuantityRequirementsViewSet)
+router.register('tool_types', ToolTypeViewSet)
+router.register('max_sharpens', MaxSharpenViewSet)
+router.register('services', ServiceViewSet)
 
 urlpatterns = [
-    path("", views.ListToolingInfo.as_view(), name="toolList"),
-    path("<int:pk>", views.ToolDetail.as_view(), name="toolUpdate")
+    # Other URL patterns
+    path('', include(router.urls)),
 ]

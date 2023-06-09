@@ -42,6 +42,9 @@ class Quantity_Requirements(models.Model):
 class Tool_Type(models.Model):
     tool_type = models.CharField(max_length=45, null=False)
     tool = models.ForeignKey("Tool", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.tool_type}"
     
 
 class Max_Sharpen(models.Model):
