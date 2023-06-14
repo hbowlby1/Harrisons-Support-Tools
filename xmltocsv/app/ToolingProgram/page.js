@@ -2,10 +2,13 @@
 
 //next.js imports
 
+//component imports
+
 //axios imports
 import axios from "axios";
 //bootstrap imports
 import Table from "react-bootstrap/Table";
+import Spinner from "react-bootstrap/Spinner";
 
 //component imports
 import TheNav from "@/app/UI/theNav";
@@ -76,7 +79,7 @@ function page() {
     let theMachines = {};
     let theManufacturers = {};
     let theMaxSharpen = {};
-    
+
     //loop through all the keys in toolType
     Object.keys(toolType).map(() => {
       theType = toolType[toolId];
@@ -108,7 +111,9 @@ function page() {
     });
     return (
       <tr key={toolId}>
-        <td>{tool.tool_name}</td>
+        <td>
+          {tool.tool_name} <span className="formButtons">add</span>
+        </td>
         <td>{tool.tool_serial}</td>
         <td>{theType.tool === tool.id ? theType.tool_type : "nada"}</td>
         <td>{tool.part_number}</td>
@@ -148,30 +153,34 @@ function page() {
   return (
     <>
       <TheNav />
-      <Table striped="columns">
-        <thead>
-          <tr>
-            <th>Tool Name</th>
-            <th>Serial number</th>
-            <th>Tool Type</th>
-            <th>Part #</th>
-            <th>Required #</th>
-            <th>Minimum #</th>
-            <th>Current #</th>
-            <th>Out For Service</th>
-            {/* <th># On Order</th> */}
-            {/* <th>Change Interval</th> */}
-            <th>Vendor</th>
-            <th>Manufacturer</th>
-            <th>Machines</th>
-            <th>Times Sharpened</th>
-            <th>Maximum Sharpen</th>
-            <th>Has Matching Set</th>
-            <th>Half Life</th>
-          </tr>
-        </thead>
-        <tbody>{toolRows}</tbody>
-      </Table>
+      {!isFetch ? (
+        <Spinner animation="border" variant="primary" style={{margin:"auto 50%"}}/>
+      ) : (
+        <Table striped="columns" size="sm" responsive hover>
+          <thead>
+            <tr>
+              <th>Tool Name</th>
+              <th>Serial number</th>
+              <th>Tool Type</th>
+              <th>Part #</th>
+              <th>Required #</th>
+              <th>Minimum #</th>
+              <th>Current #</th>
+              <th>Out For Service</th>
+              {/* <th># On Order</th> */}
+              {/* <th>Change Interval</th> */}
+              <th>Vendor</th>
+              <th>Manufacturer</th>
+              <th>Machines</th>
+              <th>Times Sharpened</th>
+              <th>Maximum Sharpen</th>
+              <th>Has Matching Set</th>
+              <th>Half Life</th>
+            </tr>
+          </thead>
+          <tbody>{toolRows}</tbody>
+        </Table>
+      )}
     </>
   );
 }
