@@ -3,15 +3,17 @@
 //next.js imports
 
 //component imports
-
+import ToolAccordion from "../components/ToolAccordion";
 //axios imports
 import axios from "axios";
 //bootstrap imports
-import Table from "react-bootstrap/Table";
 import Spinner from "react-bootstrap/Spinner";
 
 //component imports
 import TheNav from "@/app/UI/theNav";
+
+//fontawesome imports
+
 //css imports
 
 import { useState, useEffect } from "react";
@@ -25,6 +27,7 @@ function page() {
   const [toolType, setToolType] = useState({});
   const [maxSharpen, setMaxSharpen] = useState({});
   const [services, setServices] = useState({});
+  const [toolClass, setToolClass] = useState({});
   const [isFetch, setIsFetch] = useState(false);
 
   //set base URL to connect to backend for tools
@@ -42,6 +45,7 @@ function page() {
       const toolTypesResponse = await axios.get(BASE_URL + "tool_types");
       const sharpenResponse = await axios.get(BASE_URL + "max_sharpens");
       const servicesResponse = await axios.get(BASE_URL + "services");
+      const toolClassResponse = await axios.get(BASE_URL + "tool_class");
       //setting the data retrieved from the api
       setTools(toolResponse.data);
       setMachines(machinesResponse.data);
@@ -50,6 +54,7 @@ function page() {
       setToolType(toolTypesResponse.data);
       setMaxSharpen(sharpenResponse.data);
       setServices(servicesResponse.data);
+      setToolClass(toolClassResponse);
       setIsFetch(true);
 
       //for dev/testing only
@@ -60,6 +65,7 @@ function page() {
       // console.log(toolTypesResponse.data);
       // console.log(sharpenResponse.data);
       // console.log(servicesResponse.data);
+      // console.log(toolClassResponse.data);
     } catch (err) {
       console.log(err);
     }
@@ -111,9 +117,7 @@ function page() {
     });
     return (
       <tr key={toolId}>
-        <td>
-          {tool.tool_name} <span className="formButtons">add</span>
-        </td>
+        <td>{tool.tool_name}</td>
         <td>{tool.tool_serial}</td>
         <td>{theType.tool === tool.id ? theType.tool_type : "nada"}</td>
         <td>{tool.part_number}</td>
@@ -149,37 +153,28 @@ function page() {
       </tr>
     );
   });
+  const addTool = async (serialName) => {
+    try{
+      //create this url in the backend
+      const lastToolResponse = await axios.get(BASE_URL + 'tools/last/' + serialName);
+      let lastTool = lastToolResponse.data;
+      console.log(lastTool);
+    }catch (err){
+      console.log(err);
+    }
+  }
 
   return (
     <>
       <TheNav />
       {!isFetch ? (
-        <Spinner animation="border" variant="primary" style={{margin:"auto 50%"}}/>
+        <Spinner
+          animation="border"
+          variant="primary"
+          style={{ margin: "auto 50%" }}
+        />
       ) : (
-        <Table striped="columns" size="sm" responsive hover>
-          <thead>
-            <tr>
-              <th>Tool Name</th>
-              <th>Serial number</th>
-              <th>Tool Type</th>
-              <th>Part #</th>
-              <th>Required #</th>
-              <th>Minimum #</th>
-              <th>Current #</th>
-              <th>Out For Service</th>
-              {/* <th># On Order</th> */}
-              {/* <th>Change Interval</th> */}
-              <th>Vendor</th>
-              <th>Manufacturer</th>
-              <th>Machines</th>
-              <th>Times Sharpened</th>
-              <th>Maximum Sharpen</th>
-              <th>Has Matching Set</th>
-              <th>Half Life</th>
-            </tr>
-          </thead>
-          <tbody>{toolRows}</tbody>
-        </Table>
+        <ToolAccordion toolList={toolClass.data} tables={toolRows} newTool={addTool}/>
       )}
     </>
   );

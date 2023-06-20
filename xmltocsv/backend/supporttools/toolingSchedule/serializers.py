@@ -1,10 +1,5 @@
 from rest_framework import serializers
-from .models import Tool, Machine, Manufacturer, Quantity_Requirements, Tool_Type, Max_Sharpen, Service
-
-class ToolSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Tool
-        fields = "__all__"
+from .models import Tool, Machine, Manufacturer, Quantity_Requirements, Tool_Type, Max_Sharpen, Service, ToolSerialClass
 
 class MachineSerializer(serializers.ModelSerializer):
     tool_id = serializers.ReadOnlyField(source='tool.id')
@@ -42,7 +37,18 @@ class ServiceSerializer(serializers.ModelSerializer):
         model = Service
         fields = "__all__"
 
+class ToolSerialClassSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ToolSerialClass
+        fields = "__all__"
 
-
-
-
+class ToolSerializer(serializers.ModelSerializer):
+    machine_set = MachineSerializer(read_only=True, many=True)
+    manufacturer_set = ManufacturerSerializer(read_only=True, many=True)
+    quantity_requirements_set = QauntityRequirementsSerializer(read_only=True, many=True)
+    tool_type_set = ToolTypeSerializer(read_only=True, many=True)
+    max_sharpen_set = SharpenSerializer(read_only=True, many=True)
+    service_set = ServiceSerializer(read_only=True, many=True)
+    class Meta:
+        model = Tool
+        fields = "__all__"

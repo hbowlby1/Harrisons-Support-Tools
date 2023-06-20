@@ -8,7 +8,8 @@ from .views import (
     QuantityRequirementsViewSet,
     ToolTypeViewSet,
     MaxSharpenViewSet,
-    ServiceViewSet
+    ServiceViewSet,
+    SerialClassViewSet
 )
 
 
@@ -20,6 +21,7 @@ router.register('quantity_requirements', QuantityRequirementsViewSet)
 router.register('tool_types', ToolTypeViewSet)
 router.register('max_sharpens', MaxSharpenViewSet)
 router.register('services', ServiceViewSet)
+router.register('tool_class', SerialClassViewSet)
 
 urlpatterns = [
     # Other URL patterns
