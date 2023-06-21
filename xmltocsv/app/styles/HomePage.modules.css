@@ -2,13 +2,3 @@
     text-align: center;
     border-bottom: 2px solid black;
 }
-
-.btn{
-    margin: 20px;
-    width: 250px;
-    height: 250px;
-}
-.btn:hover{
-    transition: filter .5s;
-    filter: drop-shadow(0 0 0.75rem rgb(109, 105, 105));
-}

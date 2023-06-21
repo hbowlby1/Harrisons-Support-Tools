@@ -16,6 +16,11 @@ import TheNav from "./UI/theNav";
 //css imports
 import styles from "./styles/HomePage.modules.css"
 
+//fontawesome import
+import { config } from '@fortawesome/fontawesome-svg-core'
+import '@fortawesome/fontawesome-svg-core/styles.css'
+config.autoAddCss = false
+
 
 export default function Home() {
   return (
@@ -36,6 +41,11 @@ export default function Home() {
             <Col>
               <Link href="/DropZonePage">
                 <Button>XML to CSV</Button>
+              </Link>
+            </Col>
+            <Col>
+              <Link href="/ToolingProgram">
+                <Button>Tooling Program</Button>
               </Link>
             </Col>
           </Row>

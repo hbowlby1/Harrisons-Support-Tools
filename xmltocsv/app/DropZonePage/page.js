@@ -31,11 +31,11 @@ function DropZonePage() {
   return (
     <>
       <TheNav />
-      <main>
         <Container>
           <DropZone data={data} dispatch={dispatch} />
         </Container>
-      </main>
+
+        <p>Future plan: Automatically convert CSV's to match e.Pic templates</p>
     </>
   );
 }
