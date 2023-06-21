@@ -37,6 +37,7 @@ class ServiceSerializer(serializers.ModelSerializer):
         model = Service
         fields = "__all__"
 
+
 class ToolSerialClassSerializer(serializers.ModelSerializer):
     class Meta:
         model = ToolSerialClass
@@ -49,6 +50,7 @@ class ToolSerializer(serializers.ModelSerializer):
     tool_type_set = ToolTypeSerializer(read_only=True, many=True)
     max_sharpen_set = SharpenSerializer(read_only=True, many=True)
     service_set = ServiceSerializer(read_only=True, many=True)
+    tool_serial_class = ToolSerialClassSerializer(read_only=True)
     class Meta:
         model = Tool
         fields = "__all__"
