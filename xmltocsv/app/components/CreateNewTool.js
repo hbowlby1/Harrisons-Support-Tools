@@ -19,7 +19,6 @@ function CreateNewTool() {
     sharpen: {},
     service: {},
   });
-  const [toolId, setToolId] = useState();
 
   const [isHalfLifeChecked, setIsHalfLifeChecked] = useState(false);
   const [isRequiresMatchChecked, setIsRequiresMatchChecked] = useState(false);

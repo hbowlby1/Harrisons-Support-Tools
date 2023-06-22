@@ -67,6 +67,15 @@ function page() {
     } catch (err) {
       console.log(err);
     }
+    //grab the tool serial, slice it, convert number to integer
+    //add 1 to the number, convert back to string
+    //combine number and string and set to new serial.
+    // try{
+    //   const addNewTool = await axios.post(BASE_URL)
+    // }
+    // catch(err){
+    //   console.log(err);
+    // }
   };
   const makeTool = () => {
     setToggle(!toggle);
