@@ -4,7 +4,7 @@ from django.db import models
 class Tool(models.Model):
     tool_name = models.CharField(max_length=45, null=False)
     tool_serial_class = models.ForeignKey('ToolSerialClass', on_delete=models.SET_NULL, null=True, blank=True)
-    tool_serial = models.CharField(max_length=45, null=False, unique=True)
+    tool_serial = models.CharField(max_length=45, unique=True)
     part_number = models.CharField(max_length=45, null=False)
     tool_quantity = models.IntegerField(null=False)
     tool_is_out_for_service = models.BooleanField(null=False, default=False)
@@ -14,13 +14,13 @@ class Tool(models.Model):
     tool_has_half_life = models.BooleanField(null=False, default=False)
     tool_half_life_quantity = models.IntegerField(null=False, default=0)
     tool_requires_match = models.BooleanField(null=False, default=False)
+    tool_match = models.CharField(max_length=45, null=True, blank=True)
     tool_is_active = models.BooleanField(null=False, default=True)
 
     #override the save to automatically add the tool class
     #check if the tool class already exists
     def save(self, *args, **kwargs):
         #when the tools serials is update tool_class will update as well
-        #saves as TOOL00X
         tool_class_str = self.tool_serial[:4].upper() + "00X"
 
         tool_serial_class, created = ToolSerialClass.objects.get_or_create(
@@ -33,7 +33,7 @@ class Tool(models.Model):
         super(Tool, self).save(*args, **kwargs)
     
     def __str__(self):
-        return f"{self.tool_name}-{self.tool_serial}-{self.tool_quantity}-{self.tool_is_active}"
+        return f"{self.id}-{self.tool_name}-{self.tool_serial}-{self.tool_quantity}-{self.tool_is_active}"
 
 class Machine(models.Model):
     machine_name = models.CharField(max_length=45, null=False)

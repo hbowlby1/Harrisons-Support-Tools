@@ -13,7 +13,7 @@ function ToolAccordion(props) {
     return groups;
   }, {});
 
-  console.log(props.toolList);
+  // console.log(props.toolList);
   // Create an Accordion.Item for each tool class
   const toolAccordions = Object.entries(toolsByClass).map(([toolClass, tools], index) => {
     const tableBody = tools.map(tool => {

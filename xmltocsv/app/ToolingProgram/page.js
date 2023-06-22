@@ -8,10 +8,11 @@ import ToolAccordion from "../components/ToolAccordion";
 import axios from "axios";
 //bootstrap imports
 import Spinner from "react-bootstrap/Spinner";
+import Button from "react-bootstrap/Button";
 
 //component imports
 import TheNav from "@/app/UI/theNav";
-
+import CreateNewTool from "../components/CreateNewTool";
 //fontawesome imports
 
 //css imports
@@ -22,6 +23,8 @@ function page() {
   //set state for the tools
   const [tools, setTools] = useState([]);
   const [isFetch, setIsFetch] = useState(false);
+  const [lastTool, setLastTool] = useState([]);
+  const [toggle, setToggle] = useState(false);
 
   //set base URL to connect to backend for tools
   const BASE_URL = "http://localhost:8000/tool/";
@@ -55,13 +58,19 @@ function page() {
       const lastToolResponse = await axios.get(
         BASE_URL + "tools/last/" + serialName
       );
-      let lastTool = lastToolResponse.data;
+      const lastTool = lastToolResponse.data;
+      const lastToolArray = Object.keys(lastTool).map((lastToolId) => (
+        lastTool[lastToolId]
+      ));
+      setLastTool(lastToolArray)
       console.log(lastTool);
     } catch (err) {
       console.log(err);
     }
   };
-
+  const makeTool = () => {
+    setToggle(!toggle);
+  }
   return (
     <>
       <TheNav />
@@ -77,6 +86,12 @@ function page() {
           newTool={addTool}
         />
       )}
+      <Button onClick={makeTool} className="mt-3" style={{width:"50%", margin:"auto 25%"}}>
+        Create New Tool
+      </Button>
+      {toggle ? (
+        <CreateNewTool />
+      ): <></>}
     </>
   );
 }
