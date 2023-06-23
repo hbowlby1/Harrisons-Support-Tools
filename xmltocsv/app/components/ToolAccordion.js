@@ -76,6 +76,14 @@ function ToolAccordion(props) {
               </thead>
               <tbody>{tableBody}</tbody>
             </Table>
+            <Button
+              key={index}
+              size="sm"
+              style={{ margin: "0 50%" }}
+              onClick={() => props.newTool(toolClass)}
+            >
+              Add
+            </Button>
           </Accordion.Body>
         </Accordion.Item>
       );
