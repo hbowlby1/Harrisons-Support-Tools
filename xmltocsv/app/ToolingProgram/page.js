@@ -25,23 +25,33 @@ function page() {
   const [isFetch, setIsFetch] = useState(false);
   const [lastTool, setLastTool] = useState([]);
   const [toggle, setToggle] = useState(false);
+  const [showInactive, setShowInactive] = useState(false);
+
+  //get the current date
+  const date = new Date();
+  let currentDate = date.toString();
 
   //set base URL to connect to backend for tools
   const BASE_URL = "http://localhost:8000/tool/";
 
+  useEffect(() => {
+    fetchTools();
+  }, [showInactive]);
+
   const fetchTools = async () => {
     try {
       //retrieving the data from the api
-      const toolResponse = await axios.get(BASE_URL + "tools");
+      let toolResponse = await axios.get(BASE_URL + "tools");
       //setting the data retrieved from the api
-      const toolsObject = toolResponse.data;
-      const toolsArray = Object.keys(toolsObject).map((toolId) => {
+      let toolsObject = toolResponse.data;
+      let toolsArray = Object.keys(toolsObject).map((toolId) => {
         return toolsObject[toolId];
       });
+      if (!showInactive) {
+        toolsArray = toolsArray.filter((tool) => tool.tool_is_active);
+      }
       setTools(toolsArray);
       setIsFetch(true);
-
-      //for dev/testing only
     } catch (err) {
       console.log(err);
     }
@@ -52,17 +62,29 @@ function page() {
     }
   }, [isFetch]);
 
+  const checkActive = async (toolId, isActive) => {
+    try {
+      let updateToolResponse = await axios.patch(
+        BASE_URL + `tools/` + toolId + "/",
+        { tool_is_active: isActive }
+      );
+      fetchTools();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const addTool = async (serialName) => {
     try {
       //create this url in the backend
-      const lastToolResponse = await axios.get(
+      let lastToolResponse = await axios.get(
         BASE_URL + "tools/last/" + serialName
       );
-      const lastTool = lastToolResponse.data;
-      const lastToolArray = Object.keys(lastTool).map((lastToolId) => (
-        lastTool[lastToolId]
-      ));
-      setLastTool(lastToolArray)
+      let lastTool = lastToolResponse.data;
+      let lastToolArray = Object.keys(lastTool).map(
+        (lastToolId) => lastTool[lastToolId]
+      );
+      setLastTool(lastToolArray);
       console.log(lastTool);
     } catch (err) {
       console.log(err);
@@ -79,10 +101,24 @@ function page() {
   };
   const makeTool = () => {
     setToggle(!toggle);
-  }
+  };
   return (
     <>
       <TheNav />
+      <label>Inactive tools (deletes after 30 days)</label>
+      <input
+        type="checkbox"
+        checked={showInactive}
+        onChange={(e) => setShowInactive(e.target.checked)}
+      />
+      <Button
+        onClick={makeTool}
+        className="mt-3"
+        style={{ width: "50%", margin: "auto 25%" }}
+      >
+        Create New Tool
+      </Button>
+      {toggle ? <CreateNewTool getTools={fetchTools} toggler={makeTool}/> : <></>}
       {!isFetch ? (
         <Spinner
           animation="border"
@@ -93,14 +129,9 @@ function page() {
         <ToolAccordion
           toolList={tools}
           newTool={addTool}
+          activeFilter={checkActive}
         />
       )}
-      <Button onClick={makeTool} className="mt-3" style={{width:"50%", margin:"auto 25%"}}>
-        Create New Tool
-      </Button>
-      {toggle ? (
-        <CreateNewTool />
-      ): <></>}
     </>
   );
 }

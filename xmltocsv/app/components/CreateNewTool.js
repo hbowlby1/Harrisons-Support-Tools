@@ -7,7 +7,7 @@ import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 
-function CreateNewTool() {
+function CreateNewTool(props) {
   const BASE_URL = "http://localhost:8000/tool/";
 
   const [inputs, setInputs] = useState({
@@ -63,9 +63,10 @@ function CreateNewTool() {
       tool: {
         ...inputs.tool,
         tool_serial: inputs.tool.tool_name.trim().substr(0, 4).toUpperCase() + "001",
+        tool_has_half_life: isHalfLifeChecked,
+        tool_requires_match: isRequiresMatchChecked
       },
     };
-    console.log(newInputs);
     let createdToolId;
     try {
       const toolRes = await axios.post(BASE_URL + "tools/", newInputs.tool);
@@ -133,6 +134,8 @@ function CreateNewTool() {
     } catch (error) {
       console.error(error);
     }
+    props.toggler();
+    props.getTools();
   };
 
   return (

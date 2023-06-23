@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 # Create your models here.
 class Tool(models.Model):
@@ -16,6 +17,7 @@ class Tool(models.Model):
     tool_requires_match = models.BooleanField(null=False, default=False)
     tool_match = models.CharField(max_length=45, null=True, blank=True)
     tool_is_active = models.BooleanField(null=False, default=True)
+    tool_inactive_date = models.DateTimeField(null=True, blank=True, default=None)
 
     #override the save to automatically add the tool class
     #check if the tool class already exists
@@ -29,6 +31,13 @@ class Tool(models.Model):
 
         self.tool_serial_class = tool_serial_class
 
+
+        #handling dates when tool_is_active updates
+        if(self.tool_is_active == False and self.tool_inactive_date is None):
+            self.tool_inactive_date = timezone.now()
+        elif(self.tool_is_active == True):
+            self.tool_inactive_date = None
+            
         #Save the tool first so the foreign key relations are fulfilled
         super(Tool, self).save(*args, **kwargs)
     
