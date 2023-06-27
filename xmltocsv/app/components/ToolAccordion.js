@@ -1,6 +1,8 @@
+//bootstrap imports
 import Accordion from "react-bootstrap/Accordion";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
 
 function ToolAccordion(props) {
   // Group tools by their serial class
@@ -13,7 +15,6 @@ function ToolAccordion(props) {
     return groups;
   }, {});
 
-  // console.log(props.toolList);
   // Create an Accordion.Item for each tool class
   const toolAccordions = Object.entries(toolsByClass).map(
     ([toolClass, tools], index) => {
@@ -27,9 +28,25 @@ function ToolAccordion(props) {
                 onChange={(e) => props.activeFilter(tool.id, e.target.checked)}
               />
             </td>
-            <td>{tool.tool_name}</td>
+            <td>
+              <input
+                name="tool_name"
+                value={tool.tool_name}
+                type="text"
+                onChange={(e) => props.changeData(e, tool.id)}
+                readOnly={props.readOnly}
+              ></input>
+            </td>
             <td>{tool.tool_serial}</td>
-            <td>{tool.tool_type_set[0].tool_type}</td>
+            <td>
+              <input
+                name="tool_type"
+                value={tool.tool_type_set[0].tool_type}
+                type="text"
+                onChange={(e) => props.changeData(e, tool.id)}
+                readOnly={props.readOnly}
+              />
+            </td>
             <td>{tool.part_number}</td>
             <td>{tool.quantity_requirements_set[0].quantity_requested}</td>
             <td>{tool.quantity_requirements_set[0].quantity_minimum}</td>
@@ -65,9 +82,9 @@ function ToolAccordion(props) {
                   <th>Minimum #</th>
                   <th>Current #</th>
                   <th>Out For Service</th>
+                  <th>Machines</th>
                   <th>Vendor</th>
                   <th>Manufacturer</th>
-                  <th>Machines</th>
                   <th>Times Sharpened</th>
                   <th>Maximum Sharpen</th>
                   <th>Has Matching Set</th>
@@ -76,14 +93,32 @@ function ToolAccordion(props) {
               </thead>
               <tbody>{tableBody}</tbody>
             </Table>
-            <Button
-              key={index}
-              size="sm"
-              style={{ margin: "0 50%" }}
-              onClick={() => props.newTool(toolClass)}
-            >
-              Add
-            </Button>
+            {!props.isEditing ? (
+              <ButtonGroup
+                key={index}
+                aria-label="function buttons"
+                style={{ margin: "0 50%" }}
+              >
+                <Button size="sm" onClick={() => props.newTool(toolClass)}>
+                  Add
+                </Button>
+                <Button size="sm" variant="warning" onClick={props.editing}>
+                  Edit
+                </Button>
+                <Button size="sm" variant="danger">
+                  Delete
+                </Button>
+              </ButtonGroup>
+            ) : (
+              <ButtonGroup style={{ margin: "0 50%" }}>
+                <Button variant="success" size="md" onClick={props.updateTools}>
+                  Update
+                </Button>
+                <Button onClick={props.editing} variant="danger" size="md">
+                  Cancel
+                </Button>
+              </ButtonGroup>
+            )}
           </Accordion.Body>
         </Accordion.Item>
       );

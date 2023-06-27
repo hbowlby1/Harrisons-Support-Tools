@@ -26,6 +26,10 @@ function page() {
   const [lastTool, setLastTool] = useState([]);
   const [toggle, setToggle] = useState(false);
   const [showInactive, setShowInactive] = useState(false);
+  const [readOnly, setReadOnly] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [editedData, setEditedData] = useState([]);
 
   //get the current date
   const date = new Date();
@@ -102,6 +106,54 @@ function page() {
   const makeTool = () => {
     setToggle(!toggle);
   };
+
+  //allows editing the tool information
+  const Editing = () => {
+    setIsEditing(!isEditing);
+    setReadOnly(!readOnly);
+  };
+
+  //this is the function that allows changing of individual tool information
+  const onChangeInput = (e, toolId) => {
+    const {name, value} = e.target;
+  
+    const updatedTools = tools.map(tool =>
+      tool.id === toolId ? { ...tool, [name]: value } : tool
+    );
+  
+    setTools(updatedTools);
+  
+    const updatedTool = updatedTools.find(tool => tool.id === toolId);
+  
+    // If the tool is not in the editedData array yet, add it
+    if (!editedData.find(tool => tool.id === toolId)) {
+      setEditedData(prevEditedData => [...prevEditedData, updatedTool]);
+    } else {
+      // If the tool is already in the editedData array, update it
+      setEditedData(prevEditedData => prevEditedData.map(tool =>
+        tool.id === toolId ? updatedTool : tool
+      ));
+    }
+  };
+  
+
+  const updateTools = async () => {
+    //check for changes in the tool
+    for (let tool of editedData) {
+      try {
+        //patch the tool
+        let test = await axios.patch(BASE_URL + "tools/" + tool.id + "/", tool);
+        console.log(test);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    fetchTools();
+    setIsEditing(false);
+    setReadOnly(true);
+    setEditedData([]);
+  };
+
   return (
     <>
       <TheNav />
@@ -118,7 +170,11 @@ function page() {
       >
         Create New Tool
       </Button>
-      {toggle ? <CreateNewTool getTools={fetchTools} toggler={makeTool}/> : <></>}
+      {toggle ? (
+        <CreateNewTool getTools={fetchTools} toggler={makeTool} />
+      ) : (
+        <></>
+      )}
       {!isFetch ? (
         <Spinner
           animation="border"
@@ -130,6 +186,11 @@ function page() {
           toolList={tools}
           newTool={addTool}
           activeFilter={checkActive}
+          changeData={onChangeInput}
+          editing={Editing}
+          isEditing={isEditing}
+          readOnly={readOnly}
+          updateTools={updateTools}
         />
       )}
     </>
