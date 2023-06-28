@@ -29,7 +29,8 @@ function page() {
   const [readOnly, setReadOnly] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [editedData, setEditedData] = useState([]);
+  const [editedTool, setEditedTool] = useState([]);
+  const [editedToolType, setEditedToolType] = useState([]);
 
   //get the current date
   const date = new Date();
@@ -114,32 +115,51 @@ function page() {
   };
 
   //this is the function that allows changing of individual tool information
-  const onChangeInput = (e, toolId) => {
-    const {name, value} = e.target;
-  
-    const updatedTools = tools.map(tool =>
-      tool.id === toolId ? { ...tool, [name]: value } : tool
-    );
-  
-    setTools(updatedTools);
-  
-    const updatedTool = updatedTools.find(tool => tool.id === toolId);
-  
-    // If the tool is not in the editedData array yet, add it
-    if (!editedData.find(tool => tool.id === toolId)) {
-      setEditedData(prevEditedData => [...prevEditedData, updatedTool]);
+  const onChangeInput = (e, toolId, toolTypeId) => {
+    const { name, value } = e.target;
+
+    if (name === "tool_type") {
+      //check if the tool type is in the editedToolType array
+      if (!editedToolType.find((toolType) => toolType.id === toolTypeId)) {
+        setEditedToolType((prevEditedToolType) => [
+          ...prevEditedToolType,
+          { id: toolTypeId, tool_type: value },
+        ]);
+        console.log(editedToolType);
+      } else {
+        //if tool type is already in the array, update it
+        setEditedToolType((prevEditedToolType) =>
+          prevEditedToolType.map((toolType) =>
+            toolType.id === toolTypeId
+              ? { id: toolTypeId, tool_type: value }
+              : toolType
+          )
+        );
+      }
     } else {
-      // If the tool is already in the editedData array, update it
-      setEditedData(prevEditedData => prevEditedData.map(tool =>
-        tool.id === toolId ? updatedTool : tool
-      ));
+      const updatedTools = tools.map((tool) =>
+        tool.id === toolId ? { ...tool, [name]: value } : tool
+      );
+      setTools(updatedTools);
+      const updatedTool = updatedTools.find((tool) => tool.id === toolId);
+
+      // If the tool is not in the editedData array yet, add it
+      if (!editedTool.find((tool) => tool.id === toolId)) {
+        setEditedTool((prevEditedData) => [...prevEditedData, updatedTool]);
+      } else {
+        // If the tool is already in the editedData array, update it
+        setEditedTool((prevEditedData) =>
+          prevEditedData.map((tool) =>
+            tool.id === toolId ? updatedTool : tool
+          )
+        );
+      }
     }
   };
-  
 
   const updateTools = async () => {
     //check for changes in the tool
-    for (let tool of editedData) {
+    for (let tool of editedTool) {
       try {
         //patch the tool
         let test = await axios.patch(BASE_URL + "tools/" + tool.id + "/", tool);
@@ -148,10 +168,21 @@ function page() {
         console.error(err);
       }
     }
+
+    for (let toolType of editedToolType) {
+      try {
+        await axios.patch(BASE_URL + "tool_types/" + toolType.id + "/", {
+          tool_type: toolType.tool_type,
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
     fetchTools();
     setIsEditing(false);
     setReadOnly(true);
-    setEditedData([]);
+    setEditedTool([]);
+    setEditedToolType([]);
   };
 
   return (

@@ -29,23 +29,29 @@ function ToolAccordion(props) {
               />
             </td>
             <td>
-              <input
-                name="tool_name"
-                value={tool.tool_name}
-                type="text"
-                onChange={(e) => props.changeData(e, tool.id)}
-                readOnly={props.readOnly}
-              ></input>
+              {props.isEditing ? (
+                <input
+                  name="tool_name"
+                  placeholder={tool.tool_name}
+                  type="text"
+                  onChange={(e) => props.changeData(e, tool.id)}
+                  readOnly={props.readOnly}
+                />
+              ): tool.tool_name}
             </td>
             <td>{tool.tool_serial}</td>
             <td>
-              <input
-                name="tool_type"
-                value={tool.tool_type_set[0].tool_type}
-                type="text"
-                onChange={(e) => props.changeData(e, tool.id)}
-                readOnly={props.readOnly}
-              />
+              {props.isEditing ? (
+                <input
+                  name="tool_type"
+                  type="text"
+                  onChange={(e) => props.changeData(e, tool.id, tool.tool_type_set[0].id)}
+                  placeholder={tool.tool_type_set[0].tool_type}
+                  readOnly={props.readOnly}
+                />
+              ) : (
+                tool.tool_type_set[0].tool_type
+              )}
             </td>
             <td>{tool.part_number}</td>
             <td>{tool.quantity_requirements_set[0].quantity_requested}</td>
