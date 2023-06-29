@@ -93,7 +93,23 @@ function ToolAccordion(props) {
                 tool.quantity_requirements_set[0].quantity_requested
               )}
             </td>
-            <td>{tool.quantity_requirements_set[0].quantity_minimum}</td>
+            <td>
+              {props.isEditing ? (
+                <input
+                  name="quantity_min"
+                  type="number"
+                  onChange={(e) =>
+                    props.changeData(e, tool.id, {
+                      type: "quantityMinId",
+                      id: tool.quantity_requirements_set[0].id,
+                    })
+                  }
+                  placeholder={tool.quantity_requirements_set[0].quantity_minimum}
+                />
+              ) : (
+                tool.quantity_requirements_set[0].quantity_minimum
+              )}
+            </td>
             <td>{tool.tool_quantity}</td>
             <td>{tool.tool_is_out_for_service ? "Yes" : "No"}</td>
             <td>{tool.machine_set[0].machine_name}</td>

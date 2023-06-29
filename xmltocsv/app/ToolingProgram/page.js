@@ -32,6 +32,7 @@ function page() {
   const [editedTool, setEditedTool] = useState([]);
   const [editedToolType, setEditedToolType] = useState([]);
   const [editedQuantity, setEditedQuantity] = useState([]);
+  const [editedMinQuantity, setEditedMinQuantity] = useState([]);
 
   //get the current date
   const date = new Date();
@@ -155,18 +156,38 @@ function page() {
           )
         );
       }
-    } else if (name === "quantity_required" && idObject.type === "quantityReqId"){
+    } else if (
+      name === "quantity_required" &&
+      idObject.type === "quantityReqId"
+    ) {
       //check if the quantity item is in the editedQuantity array
-      if(!editedQuantity.find((quantity) => quantity.id === idObject.id)){
+      if (!editedQuantity.find((quantity) => quantity.id === idObject.id)) {
         setEditedQuantity((prevEditedQauntity) => [
           ...prevEditedQauntity,
-          {id: idObject.id, quantity_requested: value}
-        ])
+          { id: idObject.id, quantity_requested: value },
+        ]);
       } else {
         //if it is in the array, then update it
-        setEditedQuantity((prevEditedQauntity) => 
-          prevEditedQauntity.map((quantity) => 
-            quantity.id === idObject.id ? {id: idObject.id, quantity_requested: value} : quantity
+        setEditedQuantity((prevEditedQauntity) =>
+          prevEditedQauntity.map((quantity) =>
+            quantity.id === idObject.id
+              ? { id: idObject.id, quantity_requested: value }
+              : quantity
+          )
+        );
+      }
+    } else if (name === "quantity_min" && idObject.type === "quantityMinId") {
+      if (!editedMinQuantity.find((quantity) => quantity.id === idObject.id)) {
+        setEditedMinQuantity((prevEditedMinQauntity) => [
+          ...prevEditedMinQauntity,
+          { id: idObject.id, quantity_minimum: value },
+        ]);
+      } else {
+        setEditedMinQuantity((prevEditedMinQauntity) =>
+          prevEditedMinQauntity.map((quantity) =>
+            quantity.id === idObject.id
+              ? { id: idObject.id, quantity_minimum: value }
+              : quantity
           )
         );
       }
@@ -197,9 +218,25 @@ function page() {
 
     for (let quantity of editedQuantity) {
       try {
-        await axios.patch(BASE_URL + "quantity_requirements/" + quantity.id + "/", {
-          quantity_requested: quantity.quantity_requested,
-        });
+        await axios.patch(
+          BASE_URL + "quantity_requirements/" + quantity.id + "/",
+          {
+            quantity_requested: quantity.quantity_requested,
+          }
+        );
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    for (let minQuantity of editedMinQuantity){
+      try {
+        await axios.patch(
+          BASE_URL + "quantity_requirements/" + minQuantity.id + "/",
+          {
+            quantity_minimum: minQuantity.quantity_minimum
+          }
+        );
       } catch (err) {
         console.error(err);
       }
@@ -210,6 +247,7 @@ function page() {
     setEditedTool([]);
     setEditedToolType([]);
     setEditedQuantity([]);
+    setEditedMinQuantity([]);
   };
 
   return (
