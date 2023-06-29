@@ -31,6 +31,7 @@ function page() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [editedTool, setEditedTool] = useState([]);
   const [editedToolType, setEditedToolType] = useState([]);
+  const [editedQuantity, setEditedQuantity] = useState([]);
 
   //get the current date
   const date = new Date();
@@ -115,28 +116,28 @@ function page() {
   };
 
   //this is the function that allows changing of individual tool information
-  const onChangeInput = (e, toolId, toolTypeId) => {
+  const onChangeInput = (e, toolId, idObject) => {
     const { name, value } = e.target;
-
-    if (name === "tool_type") {
+    if (name === "tool_type" && idObject.type === "ToolTypeId") {
+      console.log(idObject);
       //check if the tool type is in the editedToolType array
-      if (!editedToolType.find((toolType) => toolType.id === toolTypeId)) {
+      if (!editedToolType.find((toolType) => toolType.id === idObject.id)) {
         setEditedToolType((prevEditedToolType) => [
           ...prevEditedToolType,
-          { id: toolTypeId, tool_type: value },
+          { id: idObject.id, tool_type: value },
         ]);
         console.log(editedToolType);
       } else {
         //if tool type is already in the array, update it
         setEditedToolType((prevEditedToolType) =>
           prevEditedToolType.map((toolType) =>
-            toolType.id === toolTypeId
-              ? { id: toolTypeId, tool_type: value }
+            toolType.id === idObject.id
+              ? { id: idObject.id, tool_type: value }
               : toolType
           )
         );
       }
-    } else {
+    } else if (name === "tool_name" || name === "part_number") {
       const updatedTools = tools.map((tool) =>
         tool.id === toolId ? { ...tool, [name]: value } : tool
       );
@@ -151,6 +152,21 @@ function page() {
         setEditedTool((prevEditedData) =>
           prevEditedData.map((tool) =>
             tool.id === toolId ? updatedTool : tool
+          )
+        );
+      }
+    } else if (name === "quantity_required" && idObject.type === "quantityReqId"){
+      //check if the quantity item is in the editedQuantity array
+      if(!editedQuantity.find((quantity) => quantity.id === idObject.id)){
+        setEditedQuantity((prevEditedQauntity) => [
+          ...prevEditedQauntity,
+          {id: idObject.id, quantity_requested: value}
+        ])
+      } else {
+        //if it is in the array, then update it
+        setEditedQuantity((prevEditedQauntity) => 
+          prevEditedQauntity.map((quantity) => 
+            quantity.id === idObject.id ? {id: idObject.id, quantity_requested: value} : quantity
           )
         );
       }
@@ -178,11 +194,22 @@ function page() {
         console.error(err);
       }
     }
+
+    for (let quantity of editedQuantity) {
+      try {
+        await axios.patch(BASE_URL + "quantity_requirements/" + quantity.id + "/", {
+          quantity_requested: quantity.quantity_requested,
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
     fetchTools();
     setIsEditing(false);
     setReadOnly(true);
     setEditedTool([]);
     setEditedToolType([]);
+    setEditedQuantity([]);
   };
 
   return (

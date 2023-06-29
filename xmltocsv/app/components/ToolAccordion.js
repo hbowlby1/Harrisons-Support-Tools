@@ -37,7 +37,9 @@ function ToolAccordion(props) {
                   onChange={(e) => props.changeData(e, tool.id)}
                   readOnly={props.readOnly}
                 />
-              ): tool.tool_name}
+              ) : (
+                tool.tool_name
+              )}
             </td>
             <td>{tool.tool_serial}</td>
             <td>
@@ -45,7 +47,12 @@ function ToolAccordion(props) {
                 <input
                   name="tool_type"
                   type="text"
-                  onChange={(e) => props.changeData(e, tool.id, tool.tool_type_set[0].id)}
+                  onChange={(e) =>
+                    props.changeData(e, tool.id, {
+                      type: "toolTypeId",
+                      id: tool.tool_type_set[0].id,
+                    })
+                  }
                   placeholder={tool.tool_type_set[0].tool_type}
                   readOnly={props.readOnly}
                 />
@@ -53,8 +60,39 @@ function ToolAccordion(props) {
                 tool.tool_type_set[0].tool_type
               )}
             </td>
-            <td>{tool.part_number}</td>
-            <td>{tool.quantity_requirements_set[0].quantity_requested}</td>
+            <td>
+              {props.isEditing ? (
+                <input
+                  name="part_number"
+                  type="text"
+                  onChange={(e) => props.changeData(e, tool.id)}
+                  placeholder={tool.part_number}
+                  readOnly={props.readOnly}
+                />
+              ) : (
+                tool.part_number
+              )}
+            </td>
+            <td>
+              {props.isEditing ? (
+                <input
+                  name="quantity_required"
+                  type="number"
+                  onChange={(e) =>
+                    props.changeData(e, tool.id, {
+                      type: "quantityReqId",
+                      id: tool.quantity_requirements_set[0].id,
+                    })
+                  }
+                  placeholder={
+                    tool.quantity_requirements_set[0].quantity_requested
+                  }
+                  readOnly={props.readOnly}
+                />
+              ) : (
+                tool.quantity_requirements_set[0].quantity_requested
+              )}
+            </td>
             <td>{tool.quantity_requirements_set[0].quantity_minimum}</td>
             <td>{tool.tool_quantity}</td>
             <td>{tool.tool_is_out_for_service ? "Yes" : "No"}</td>
