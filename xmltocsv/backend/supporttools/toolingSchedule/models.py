@@ -58,7 +58,7 @@ class Machine(models.Model):
         return f"{self.machine_name}"
 
 class Manufacturer(models.Model):
-    name = models.CharField(max_length=45, null=False)
+    manufacturer_name = models.CharField(max_length=45, null=False)
     manufacturer_website = models.URLField()
     manufacturer_vendor = models.CharField(max_length=45, null=False)
     tool = models.ForeignKey("Tool", on_delete=models.CASCADE)

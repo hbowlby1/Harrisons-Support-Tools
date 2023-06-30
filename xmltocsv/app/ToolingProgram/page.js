@@ -35,6 +35,8 @@ function page() {
   const [editedMinQuantity, setEditedMinQuantity] = useState([]);
   const [editedMachine, setEditedMachine] = useState([]);
   const [editedVendor, setEditedVendor] = useState([]);
+  const [editedManuName, setEditedManuName] = useState([]);
+  const [editedSite, setEditedSite] = useState([]);
 
   //get the current date
   const date = new Date();
@@ -243,10 +245,26 @@ function page() {
           )
         );
       }
+    } else if (name === "manufacturer_name" && idObject.type === "manuName") {
+      if (!editedManuName.find((manuName) => manuName.id === idObject.id)) {
+        setEditedManuName((prevEditedManuName) => [
+          ...prevEditedManuName,
+          { id: idObject.id, manufacturer_name: value },
+        ]);
+      } else {
+        setEditedManuName((prevEditedManuName) =>
+          prevEditedManuName.map((manuName) =>
+            manuName.id === idObject.id
+              ? { id: idObject.id, manufacturer_name: value }
+              : manuName
+          )
+        );
+      }
     }
   };
 
   const updateTools = async () => {
+    console.log(editedManuName)
     //check for changes in the tool
     for (let tool of editedTool) {
       try {
@@ -311,6 +329,15 @@ function page() {
         console.error(err);
       }
     }
+    for (let manuName of editedManuName) {
+      try {
+        await axios.patch(BASE_URL + "manufacturers/" + manuName.id + "/", {
+          manufacturer_name: manuName.manufacturer_name,
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
     fetchTools();
     setIsEditing(false);
     setReadOnly(true);
@@ -320,6 +347,7 @@ function page() {
     setEditedMinQuantity([]);
     setEditedMachine([]);
     setEditedVendor([]);
+    setEditedManuName([]);
   };
 
   return (

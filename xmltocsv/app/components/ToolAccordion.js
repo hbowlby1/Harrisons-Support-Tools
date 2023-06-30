@@ -163,22 +163,51 @@ function ToolAccordion(props) {
             <td>
               {props.isEditing ? (
                 <input
-                name="manufacturer_vendor"
-                type="text"
-                onChange={(e) =>
-                  props.changeData(e, tool.id, {
-                    type: "manuVendor",
-                    id: tool.manufacturer_set[0].id,
-                  })
-                }
-                placeholder={tool.manufacturer_set[0].manufacturer_vendor}
-              />
-              ): tool.manufacturer_set[0].manufacturer_vendor}
-              </td>
+                  name="manufacturer_vendor"
+                  type="text"
+                  onChange={(e) =>
+                    props.changeData(e, tool.id, {
+                      type: "manuVendor",
+                      id: tool.manufacturer_set[0].id,
+                    })
+                  }
+                  placeholder={tool.manufacturer_set[0].manufacturer_vendor}
+                />
+              ) : (
+                tool.manufacturer_set[0].manufacturer_vendor
+              )}
+            </td>
             <td>
-              <a href={tool.manufacturer_set[0].manufacturer_website}>
-                {tool.manufacturer_set[0].name}
-              </a>
+              {props.isEditing ? (
+                <>
+                  <input
+                    name="manufacturer_name"
+                    type="text"
+                    onChange={(e) =>
+                      props.changeData(e, tool.id, {
+                        type: "manuName",
+                        id: tool.manufacturer_set[0].id,
+                      })
+                    }
+                    placeholder={tool.manufacturer_set[0].manufacturer_name}
+                  />
+                  <input 
+                  name="manufacturer_website"
+                  type="url"
+                  onChange={(e) =>
+                    props.changeData(e, tool.id, {
+                      type: "manuSite",
+                      id: tool.manufacturer_set[0].id,
+                    })
+                  }
+                  placeholder={tool.manufacturer_set[0].manufacturer_website}
+                  />
+                </>
+              ) : (
+                <a href={tool.manufacturer_set[0].manufacturer_website}>
+                  {tool.manufacturer_set[0].manufacturer_name}
+                </a>
+              )}
             </td>
             <td>{tool.max_sharpen_set[0].times_sharpened}</td>
             <td>{tool.max_sharpen_set[0].max_sharpen_amount}</td>
