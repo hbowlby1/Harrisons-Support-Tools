@@ -33,6 +33,8 @@ function page() {
   const [editedToolType, setEditedToolType] = useState([]);
   const [editedQuantity, setEditedQuantity] = useState([]);
   const [editedMinQuantity, setEditedMinQuantity] = useState([]);
+  const [editedMachine, setEditedMachine] = useState([]);
+  const [editedVendor, setEditedVendor] = useState([]);
 
   //get the current date
   const date = new Date();
@@ -70,7 +72,7 @@ function page() {
   }, [isFetch]);
 
   const checkActive = async (e, toolId, isActive) => {
-    const {name} = await e.target;
+    const { name } = await e.target;
     if (name === "outForService") {
       try {
         let updateToolResponse = await axios.patch(
@@ -131,7 +133,6 @@ function page() {
   //this is the function that allows changing of individual tool information
   const onChangeInput = (e, toolId, idObject) => {
     const { name, value } = e.target;
-    console.log(name);
     if (name === "tool_type" && idObject.type === "ToolTypeId") {
       console.log(idObject);
       //check if the tool type is in the editedToolType array
@@ -140,7 +141,6 @@ function page() {
           ...prevEditedToolType,
           { id: idObject.id, tool_type: value },
         ]);
-        console.log(editedToolType);
       } else {
         //if tool type is already in the array, update it
         setEditedToolType((prevEditedToolType) =>
@@ -208,6 +208,41 @@ function page() {
           )
         );
       }
+    } else if (name === "machine_name" && idObject.type === "machineName") {
+      if (
+        !editedMachine.find((machineName) => machineName.id === idObject.id)
+      ) {
+        setEditedMachine((prevEditedMachine) => [
+          ...prevEditedMachine,
+          { id: idObject.id, machine_name: value },
+        ]);
+      } else {
+        setEditedMachine((prevEditedMachine) =>
+          prevEditedMachine.map((machineName) =>
+            machineName.id === idObject.id
+              ? { id: idObject.id, machine_name: value }
+              : machineName
+          )
+        );
+      }
+    } else if (
+      name === "manufacturer_vendor" &&
+      idObject.type === "manuVendor"
+    ) {
+      if (!editedVendor.find((vendor) => vendor.id === idObject.id)) {
+        setEditedVendor((prevEditedVendor) => [
+          ...prevEditedVendor,
+          { id: idObject.id, manufacturer_vendor: value },
+        ]);
+      } else {
+        setEditedVendor((prevEditedVendor) =>
+          prevEditedVendor.map((vendor) =>
+            vendor.id === idObject.id
+              ? { id: idObject.id, manufacturer_vendor: value }
+              : vendor
+          )
+        );
+      }
     }
   };
 
@@ -258,6 +293,24 @@ function page() {
         console.error(err);
       }
     }
+    for (let machine of editedMachine) {
+      try {
+        await axios.patch(BASE_URL + "machines/" + machine.id + "/", {
+          machine_name: machine.machine_name,
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    for (let vendor of editedVendor) {
+      try {
+        await axios.patch(BASE_URL + "manufacturers/" + vendor.id + "/", {
+          manufacturer_vendor: vendor.manufacturer_vendor,
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
     fetchTools();
     setIsEditing(false);
     setReadOnly(true);
@@ -265,6 +318,8 @@ function page() {
     setEditedToolType([]);
     setEditedQuantity([]);
     setEditedMinQuantity([]);
+    setEditedMachine([]);
+    setEditedVendor([]);
   };
 
   return (

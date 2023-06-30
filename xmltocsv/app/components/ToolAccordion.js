@@ -143,8 +143,38 @@ function ToolAccordion(props) {
                 }
               />
             </td>
-            <td>{tool.machine_set[0].machine_name}</td>
-            <td>{tool.manufacturer_set[0].manufacturer_vendor}</td>
+            <td>
+              {props.isEditing ? (
+                <input
+                  name="machine_name"
+                  type="text"
+                  onChange={(e) =>
+                    props.changeData(e, tool.id, {
+                      type: "machineName",
+                      id: tool.machine_set[0].id,
+                    })
+                  }
+                  placeholder={tool.machine_set[0].machine_name}
+                />
+              ) : (
+                tool.machine_set[0].machine_name
+              )}
+            </td>
+            <td>
+              {props.isEditing ? (
+                <input
+                name="manufacturer_vendor"
+                type="text"
+                onChange={(e) =>
+                  props.changeData(e, tool.id, {
+                    type: "manuVendor",
+                    id: tool.manufacturer_set[0].id,
+                  })
+                }
+                placeholder={tool.manufacturer_set[0].manufacturer_vendor}
+              />
+              ): tool.manufacturer_set[0].manufacturer_vendor}
+              </td>
             <td>
               <a href={tool.manufacturer_set[0].manufacturer_website}>
                 {tool.manufacturer_set[0].name}
