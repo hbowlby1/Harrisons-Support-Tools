@@ -25,7 +25,8 @@ function ToolAccordion(props) {
               <input
                 type="checkbox"
                 defaultChecked={tool.tool_is_active}
-                onChange={(e) => props.activeFilter(tool.id, e.target.checked)}
+                name="isActive"
+                onChange={(e) => props.activeFilter(e, tool.id, e.target.checked)}
               />
             </td>
             <td>
@@ -129,7 +130,14 @@ function ToolAccordion(props) {
                 tool.tool_quantity
               )}
             </td>
-            <td>{tool.tool_is_out_for_service ? "Yes" : "No"}</td>
+            <td>
+            <input
+                type="checkbox"
+                defaultChecked={tool.tool_is_out_for_service}
+                name="outForService"
+                onChange={(e) => props.activeFilter(e, tool.id, e.target.checked)}
+              />
+              </td>
             <td>{tool.machine_set[0].machine_name}</td>
             <td>{tool.manufacturer_set[0].manufacturer_vendor}</td>
             <td>

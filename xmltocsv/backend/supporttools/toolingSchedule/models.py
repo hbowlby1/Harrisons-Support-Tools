@@ -9,7 +9,7 @@ class Tool(models.Model):
     part_number = models.CharField(max_length=45, null=False)
     tool_quantity = models.IntegerField(null=False)
     tool_is_out_for_service = models.BooleanField(null=False, default=False)
-    tool_is_out_for_service_date = models.DateTimeField(blank=True, null=True)
+    tool_is_out_for_service_date = models.DateTimeField(blank=True, null=True, default=None)
     tool_has_returned = models.BooleanField(null=False, default=True)
     tool_has_returned_date = models.DateTimeField(blank=True, null=True)
     tool_has_half_life = models.BooleanField(null=False, default=False)
@@ -37,6 +37,12 @@ class Tool(models.Model):
             self.tool_inactive_date = timezone.now()
         elif(self.tool_is_active == True):
             self.tool_inactive_date = None
+
+        #handling dates when tool_is_out_for_service updates
+        if(self.tool_is_out_for_service == True and self.tool_is_out_for_service_date is None):
+            self.tool_is_out_for_service_date = timezone.now()
+        elif(self.tool_is_out_for_service == False):
+            self.tool_is_out_for_service_date = None
             
         #Save the tool first so the foreign key relations are fulfilled
         super(Tool, self).save(*args, **kwargs)

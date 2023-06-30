@@ -69,15 +69,27 @@ function page() {
     }
   }, [isFetch]);
 
-  const checkActive = async (toolId, isActive) => {
-    try {
-      let updateToolResponse = await axios.patch(
-        BASE_URL + `tools/` + toolId + "/",
-        { tool_is_active: isActive }
-      );
-      fetchTools();
-    } catch (err) {
-      console.log(err);
+  const checkActive = async (e, toolId, isActive) => {
+    const {name} = await e.target;
+    if (name === "outForService") {
+      try {
+        let updateToolResponse = await axios.patch(
+          BASE_URL + `tools/` + toolId + `/`,
+          { tool_is_out_for_service: isActive }
+        );
+      } catch (err) {
+        console.error(err);
+      }
+    } else if (name === "isActive") {
+      try {
+        let updateToolResponse = await axios.patch(
+          BASE_URL + `tools/` + toolId + "/",
+          { tool_is_active: isActive }
+        );
+        fetchTools();
+      } catch (err) {
+        console.log(err);
+      }
     }
   };
 
@@ -119,6 +131,7 @@ function page() {
   //this is the function that allows changing of individual tool information
   const onChangeInput = (e, toolId, idObject) => {
     const { name, value } = e.target;
+    console.log(name);
     if (name === "tool_type" && idObject.type === "ToolTypeId") {
       console.log(idObject);
       //check if the tool type is in the editedToolType array
@@ -138,12 +151,17 @@ function page() {
           )
         );
       }
-    } else if (name === "tool_name" || name === "part_number" || name === "tool_quantity") {
+    } else if (
+      name === "tool_name" ||
+      name === "part_number" ||
+      name === "tool_quantity"
+    ) {
       const updatedTools = tools.map((tool) =>
         tool.id === toolId ? { ...tool, [name]: value } : tool
       );
       setTools(updatedTools);
       const updatedTool = updatedTools.find((tool) => tool.id === toolId);
+
       // If the tool is not in the editedData array yet, add it
       if (!editedTool.find((tool) => tool.id === toolId)) {
         setEditedTool((prevEditedData) => [...prevEditedData, updatedTool]);
@@ -228,12 +246,12 @@ function page() {
       }
     }
 
-    for (let minQuantity of editedMinQuantity){
+    for (let minQuantity of editedMinQuantity) {
       try {
         await axios.patch(
           BASE_URL + "quantity_requirements/" + minQuantity.id + "/",
           {
-            quantity_minimum: minQuantity.quantity_minimum
+            quantity_minimum: minQuantity.quantity_minimum,
           }
         );
       } catch (err) {
