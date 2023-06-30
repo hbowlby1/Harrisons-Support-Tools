@@ -3,6 +3,7 @@ import Accordion from "react-bootstrap/Accordion";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
+import Container from "react-bootstrap/Container";
 
 function ToolAccordion(props) {
   // Group tools by their serial class
@@ -26,7 +27,9 @@ function ToolAccordion(props) {
                 type="checkbox"
                 defaultChecked={tool.tool_is_active}
                 name="isActive"
-                onChange={(e) => props.activeFilter(e, tool.id, e.target.checked)}
+                onChange={(e) =>
+                  props.activeFilter(e, tool.id, e.target.checked)
+                }
               />
             </td>
             <td>
@@ -131,13 +134,15 @@ function ToolAccordion(props) {
               )}
             </td>
             <td>
-            <input
+              <input
                 type="checkbox"
                 defaultChecked={tool.tool_is_out_for_service}
                 name="outForService"
-                onChange={(e) => props.activeFilter(e, tool.id, e.target.checked)}
+                onChange={(e) =>
+                  props.activeFilter(e, tool.id, e.target.checked)
+                }
               />
-              </td>
+            </td>
             <td>{tool.machine_set[0].machine_name}</td>
             <td>{tool.manufacturer_set[0].manufacturer_vendor}</td>
             <td>
@@ -211,7 +216,11 @@ function ToolAccordion(props) {
     }
   );
 
-  return <Accordion defaultActiveKey="0">{toolAccordions}</Accordion>;
+  return (
+    <Container>
+      <Accordion defaultActiveKey="0">{toolAccordions}</Accordion>;
+    </Container>
+  );
 }
 
 export default ToolAccordion;
