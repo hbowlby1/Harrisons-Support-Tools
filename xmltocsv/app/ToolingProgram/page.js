@@ -138,13 +138,12 @@ function page() {
           )
         );
       }
-    } else if (name === "tool_name" || name === "part_number") {
+    } else if (name === "tool_name" || name === "part_number" || name === "tool_quantity") {
       const updatedTools = tools.map((tool) =>
         tool.id === toolId ? { ...tool, [name]: value } : tool
       );
       setTools(updatedTools);
       const updatedTool = updatedTools.find((tool) => tool.id === toolId);
-
       // If the tool is not in the editedData array yet, add it
       if (!editedTool.find((tool) => tool.id === toolId)) {
         setEditedTool((prevEditedData) => [...prevEditedData, updatedTool]);

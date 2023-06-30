@@ -104,13 +104,31 @@ function ToolAccordion(props) {
                       id: tool.quantity_requirements_set[0].id,
                     })
                   }
-                  placeholder={tool.quantity_requirements_set[0].quantity_minimum}
+                  placeholder={
+                    tool.quantity_requirements_set[0].quantity_minimum
+                  }
                 />
               ) : (
                 tool.quantity_requirements_set[0].quantity_minimum
               )}
             </td>
-            <td>{tool.tool_quantity}</td>
+            <td>
+              {props.isEditing ? (
+                <input
+                  name="tool_quantity"
+                  type="number"
+                  onChange={(e) =>
+                    props.changeData(e, tool.id, {
+                      type: "currentQuanId",
+                      id: tool.tool_quantity,
+                    })
+                  }
+                  placeholder={tool.tool_quantity}
+                />
+              ) : (
+                tool.tool_quantity
+              )}
+            </td>
             <td>{tool.tool_is_out_for_service ? "Yes" : "No"}</td>
             <td>{tool.machine_set[0].machine_name}</td>
             <td>{tool.manufacturer_set[0].manufacturer_vendor}</td>
@@ -127,7 +145,7 @@ function ToolAccordion(props) {
         );
       });
       return (
-        <Accordion.Item key={index} eventKey={index}>
+        <Accordion.Item key={index} eventKey="0">
           <Accordion.Header>{toolClass}</Accordion.Header>
           <Accordion.Body>
             <Table striped="columns" size="sm" responsive hover>
@@ -185,7 +203,7 @@ function ToolAccordion(props) {
     }
   );
 
-  return <Accordion>{toolAccordions}</Accordion>;
+  return <Accordion defaultActiveKey="0">{toolAccordions}</Accordion>;
 }
 
 export default ToolAccordion;
