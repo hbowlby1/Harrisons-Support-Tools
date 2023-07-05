@@ -254,6 +254,25 @@ function ToolAccordion(props) {
               />
             </td>
             <td>
+              {props.isEditing && tool.tool_requires_match ? (
+                <input
+                  name="tool_match"
+                  type="text"
+                  onChange={(e) =>
+                    props.changeData(e, tool.id, {
+                      type: "tool_match",
+                      id: tool.id,
+                    })
+                  }
+                  placeholder={tool.tool_match}
+                />
+              ) : tool.tool_requires_match ? (
+                tool.tool_match
+              ) : (
+                "None"
+              )}
+            </td>
+            <td>
               <input
                 type="checkbox"
                 defaultChecked={tool.tool_has_half_life}
@@ -262,6 +281,25 @@ function ToolAccordion(props) {
                   props.activeFilter(e, tool.id, e.target.checked)
                 }
               />
+            </td>
+            <td>
+              {props.isEditing && tool.tool_has_half_life ? (
+                <input
+                  name="tool_half_life_quantity"
+                  type="number"
+                  onChange={(e) =>
+                    props.changeData(e, tool.id, {
+                      type: "halfLifeQuantity",
+                      id: tool.id,
+                    })
+                  }
+                  placeholder={tool.tool_half_life_quantity}
+                />
+              ) : tool.tool_has_half_life ? (
+                tool.tool_half_life_quantity
+              ) : (
+                "None"
+              )}
             </td>
           </tr>
         );
@@ -288,7 +326,9 @@ function ToolAccordion(props) {
                   <th>Times Sharpened</th>
                   <th>Maximum Sharpen</th>
                   <th>Has Matching Set</th>
+                  <th>Matching Tool</th>
                   <th>Half Life</th>
+                  <th>Half Life #</th>
                 </tr>
               </thead>
               <tbody>{tableBody}</tbody>
@@ -326,9 +366,9 @@ function ToolAccordion(props) {
   );
 
   return (
-    <Container>
-      <Accordion defaultActiveKey="0">{toolAccordions}</Accordion>
-    </Container>
+    // <Container>
+    <Accordion defaultActiveKey="0">{toolAccordions}</Accordion>
+    // </Container>
   );
 }
 

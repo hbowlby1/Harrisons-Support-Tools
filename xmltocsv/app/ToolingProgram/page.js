@@ -102,6 +102,7 @@ function page() {
           BASE_URL + `tools/` + toolId + `/`,
           { tool_has_half_life: isActive }
         );
+        fetchTools();
       } catch (err) {
         console.error(err);
       }
@@ -111,6 +112,7 @@ function page() {
           BASE_URL + `tools/` + toolId + `/`,
           { tool_requires_match: isActive }
         );
+        fetchTools();
       } catch (err) {
         console.error(err);
       }
@@ -176,7 +178,9 @@ function page() {
     } else if (
       name === "tool_name" ||
       name === "part_number" ||
-      name === "tool_quantity"
+      name === "tool_quantity" ||
+      name === "tool_match" ||
+      name === "tool_half_life_quantity"
     ) {
       const updatedTools = tools.map((tool) =>
         tool.id === toolId ? { ...tool, [name]: value } : tool
