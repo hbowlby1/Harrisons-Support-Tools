@@ -260,11 +260,29 @@ function page() {
           )
         );
       }
+    } else if (
+      name === "manufacturer_website" &&
+      idObject.type === "manuSite"
+    ) {
+      if (!editedSite.find((manuSite) => manuSite.id === idObject.id)) {
+        setEditedSite((prevEditedSite) => [
+          ...prevEditedSite,
+          { id: idObject.id, manufacturer_website: value },
+        ]);
+      } else {
+        setEditedSite((prevEditedSite) =>
+          prevEditedSite.map((manuSite) =>
+            manuSite.id === idObject.id
+              ? { id: idObject.id, manufacturer_website: value }
+              : manuSite
+          )
+        );
+      }
     }
   };
 
   const updateTools = async () => {
-    console.log(editedManuName)
+    console.log(editedManuName);
     //check for changes in the tool
     for (let tool of editedTool) {
       try {
@@ -275,7 +293,6 @@ function page() {
         console.error(err);
       }
     }
-
     for (let toolType of editedToolType) {
       try {
         await axios.patch(BASE_URL + "tool_types/" + toolType.id + "/", {
@@ -285,7 +302,6 @@ function page() {
         console.error(err);
       }
     }
-
     for (let quantity of editedQuantity) {
       try {
         await axios.patch(
@@ -298,7 +314,6 @@ function page() {
         console.error(err);
       }
     }
-
     for (let minQuantity of editedMinQuantity) {
       try {
         await axios.patch(
@@ -333,6 +348,15 @@ function page() {
       try {
         await axios.patch(BASE_URL + "manufacturers/" + manuName.id + "/", {
           manufacturer_name: manuName.manufacturer_name,
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    for (let manuSite of editedSite) {
+      try {
+        await axios.patch(BASE_URL + "manufacturers/" + manuSite.id + "/", {
+          manufacturer_website: manuSite.manufacturer_website,
         });
       } catch (err) {
         console.error(err);

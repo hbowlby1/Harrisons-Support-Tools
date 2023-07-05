@@ -64,7 +64,7 @@ class Manufacturer(models.Model):
     tool = models.ForeignKey("Tool", on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.manufacturer_name}"
 
 class Quantity_Requirements(models.Model):
     quantity_requested = models.IntegerField(null=False)
