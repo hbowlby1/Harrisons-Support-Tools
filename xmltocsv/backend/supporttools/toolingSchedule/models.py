@@ -42,10 +42,20 @@ class Tool(models.Model):
         if(self.tool_is_out_for_service == True and self.tool_is_out_for_service_date is None):
             self.tool_is_out_for_service_date = timezone.now()
         elif(self.tool_is_out_for_service == False):
-            self.tool_is_out_for_service_date = None
-            
+            self.tool_is_out_for_service_date = None         
+
         #Save the tool first so the foreign key relations are fulfilled
         super(Tool, self).save(*args, **kwargs)
+        
+        #checks if the tool has returned and if so add 1 to the sharpen count
+        if(self.tool_is_out_for_service):
+            #try to get the latest sharpen record
+            try:
+                max_sharpen = self.max_sharpen_set.latest('id')
+                max_sharpen.times_sharpened += 1
+                max_sharpen.save()
+            except Max_Sharpen.DoesNotExist:
+                pass
     
     def __str__(self):
         return f"{self.id}-{self.tool_name}-{self.tool_serial}-{self.tool_quantity}-{self.tool_is_active}"
