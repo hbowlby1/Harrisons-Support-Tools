@@ -243,8 +243,26 @@ function ToolAccordion(props) {
                 tool.max_sharpen_set[0].max_sharpen_amount
               )}
             </td>
-            <td>{tool.tool_requires_match ? "Yes" : "No"}</td>
-            <td>{tool.tool_has_half_life ? "Yes" : "No"}</td>
+            <td>
+              <input
+                type="checkbox"
+                defaultChecked={tool.tool_requires_match}
+                name="hasMatch"
+                onChange={(e) =>
+                  props.activeFilter(e, tool.id, e.target.checked)
+                }
+              />
+            </td>
+            <td>
+              <input
+                type="checkbox"
+                defaultChecked={tool.tool_has_half_life}
+                name="hasHalfLife"
+                onChange={(e) =>
+                  props.activeFilter(e, tool.id, e.target.checked)
+                }
+              />
+            </td>
           </tr>
         );
       });
@@ -309,7 +327,7 @@ function ToolAccordion(props) {
 
   return (
     <Container>
-      <Accordion defaultActiveKey="0">{toolAccordions}</Accordion>;
+      <Accordion defaultActiveKey="0">{toolAccordions}</Accordion>
     </Container>
   );
 }

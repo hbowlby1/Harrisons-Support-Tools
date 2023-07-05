@@ -89,12 +89,30 @@ function page() {
     } else if (name === "isActive") {
       try {
         let updateToolResponse = await axios.patch(
-          BASE_URL + `tools/` + toolId + "/",
+          BASE_URL + `tools/` + toolId + `/`,
           { tool_is_active: isActive }
         );
         fetchTools();
       } catch (err) {
         console.log(err);
+      }
+    } else if (name === "hasHalfLife") {
+      try {
+        let updateToolResponse = await axios.patch(
+          BASE_URL + `tools/` + toolId + `/`,
+          { tool_has_half_life: isActive }
+        );
+      } catch (err) {
+        console.error(err);
+      }
+    } else if (name === "hasMatch") {
+      try {
+        let updateToolResponse = await axios.patch(
+          BASE_URL + `tools/` + toolId + `/`,
+          { tool_requires_match: isActive }
+        );
+      } catch (err) {
+        console.error(err);
       }
     }
   };
