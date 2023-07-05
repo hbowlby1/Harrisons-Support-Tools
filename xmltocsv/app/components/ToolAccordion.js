@@ -191,16 +191,16 @@ function ToolAccordion(props) {
                     }
                     placeholder={tool.manufacturer_set[0].manufacturer_name}
                   />
-                  <input 
-                  name="manufacturer_website"
-                  type="url"
-                  onChange={(e) =>
-                    props.changeData(e, tool.id, {
-                      type: "manuSite",
-                      id: tool.manufacturer_set[0].id,
-                    })
-                  }
-                  placeholder={tool.manufacturer_set[0].manufacturer_website}
+                  <input
+                    name="manufacturer_website"
+                    type="url"
+                    onChange={(e) =>
+                      props.changeData(e, tool.id, {
+                        type: "manuSite",
+                        id: tool.manufacturer_set[0].id,
+                      })
+                    }
+                    placeholder={tool.manufacturer_set[0].manufacturer_website}
                   />
                 </>
               ) : (
@@ -209,8 +209,40 @@ function ToolAccordion(props) {
                 </a>
               )}
             </td>
-            <td>{tool.max_sharpen_set[0].times_sharpened}</td>
-            <td>{tool.max_sharpen_set[0].max_sharpen_amount}</td>
+            <td>
+              {props.isEditing ? (
+                <input
+                  name="times_sharpened"
+                  type="number"
+                  onChange={(e) =>
+                    props.changeData(e, tool.id, {
+                      type: "timeSharpen",
+                      id: tool.max_sharpen_set[0].id,
+                    })
+                  }
+                  placeholder={tool.max_sharpen_set[0].times_sharpened}
+                />
+              ) : (
+                tool.max_sharpen_set[0].times_sharpened
+              )}
+            </td>
+            <td>
+              {props.isEditing ? (
+                <input
+                  name="max_sharpen_amount"
+                  type="number"
+                  onChange={(e) =>
+                    props.changeData(e, tool.id, {
+                      type: "maxSharpen",
+                      id: tool.max_sharpen_set[0].id,
+                    })
+                  }
+                  placeholder={tool.max_sharpen_set[0].max_sharpen_amount}
+                />
+              ) : (
+                tool.max_sharpen_set[0].max_sharpen_amount
+              )}
+            </td>
             <td>{tool.tool_requires_match ? "Yes" : "No"}</td>
             <td>{tool.tool_has_half_life ? "Yes" : "No"}</td>
           </tr>

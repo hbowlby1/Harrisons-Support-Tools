@@ -37,6 +37,8 @@ function page() {
   const [editedVendor, setEditedVendor] = useState([]);
   const [editedManuName, setEditedManuName] = useState([]);
   const [editedSite, setEditedSite] = useState([]);
+  const [editedSharpen, setEditedSharpen] = useState([]);
+  const [editedMaxSharpen, setEditedMaxSharpen] = useState([]);
 
   //get the current date
   const date = new Date();
@@ -278,11 +280,45 @@ function page() {
           )
         );
       }
+    } else if (name === "times_sharpened" && idObject.type === "timeSharpen") {
+      if (!editedSharpen.find((sharpen) => sharpen.id === idObject.id)) {
+        setEditedSharpen((prevEditedSharpen) => [
+          ...prevEditedSharpen,
+          { id: idObject.id, times_sharpened: value },
+        ]);
+      } else {
+        setEditedSharpen((prevEditedSharpen) =>
+          prevEditedSharpen.map((sharpen) =>
+            sharpen.id === idObject.id
+              ? { id: idObject.id, times_sharpened: value }
+              : sharpen
+          )
+        );
+      }
+    } else if (
+      name === "max_sharpen_amount" &&
+      idObject.type === "maxSharpen"
+    ) {
+      if (
+        !editedMaxSharpen.find((maxSharpen) => maxSharpen.id === idObject.id)
+      ) {
+        setEditedMaxSharpen((prevEditedMaxSharpen) => [
+          ...prevEditedMaxSharpen,
+          { id: idObject.id, max_sharpen_amount: value },
+        ]);
+      } else {
+        setEditedMaxSharpen((prevEditedMaxSharpen) =>
+          prevEditedMaxSharpen.map((maxSharpen) =>
+            maxSharpen.id === idObject.id
+              ? { id: idObject.id, max_sharpen_amount: value }
+              : maxSharpen
+          )
+        );
+      }
     }
   };
 
   const updateTools = async () => {
-    console.log(editedManuName);
     //check for changes in the tool
     for (let tool of editedTool) {
       try {
@@ -362,6 +398,24 @@ function page() {
         console.error(err);
       }
     }
+    for (let sharpen of editedSharpen) {
+      try {
+        await axios.patch(BASE_URL + "max_sharpens/" + sharpen.id + "/", {
+          times_sharpened: sharpen.times_sharpened,
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    for (let maxSharpen of editedMaxSharpen) {
+      try {
+        await axios.patch(BASE_URL + "max_sharpens/" + maxSharpen.id + "/", {
+          max_sharpen_amount: maxSharpen.max_sharpen_amount,
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
     fetchTools();
     setIsEditing(false);
     setReadOnly(true);
@@ -372,6 +426,8 @@ function page() {
     setEditedMachine([]);
     setEditedVendor([]);
     setEditedManuName([]);
+    setEditedSharpen([]);
+    setEditedMaxSharpen([]);
   };
 
   return (
