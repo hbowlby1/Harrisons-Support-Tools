@@ -131,18 +131,82 @@ function page() {
       );
       setLastTool(lastToolArray);
       console.log(lastTool);
+
+      //grab the tool serial, slice it, convert number to integer
+      //add 1 to the number, convert back to string
+      //combine number and string and set to new serial.
+      let serialNums = lastTool.tool_serial.slice(4);
+      let serialPrefix = lastTool.tool_serial.slice(0, 4);
+      let num = parseInt(serialNums, 10);
+      num += 1;
+      let newNumPart = num.toString().padStart(3, "0");
+      let newSerialNumber = serialPrefix + newNumPart;
+      console.log(lastTool.tool_serial_class);
+      //end of serial generation
+
+      let createCurrentTool = await axios.post(
+        BASE_URL + 'tools/', {
+          tool_name: lastTool.tool_name,
+          tool_serial_class: lastTool.tool_serial_class,
+          tool_serial: newSerialNumber,
+          part_number: lastTool.part_number,
+          tool_quantity: 0,
+        }
+      )
+      //gets the ID of the newly created tool
+      let newToolId = createCurrentTool.data.id
+
+      let createCurrentMachine = await axios.post(
+        BASE_URL + "machines/", {
+          machine_name: lastTool.machine_set[0].machine_name,
+          tool: newToolId,
+        }
+      )
+
+      let createNewManufacturer = await axios.post(
+        BASE_URL + "manufacturers/", {
+          manufacturer_name: lastTool.manufacturer_set[0].manufacturer_name,
+          manufacturer_website: lastTool.manufacturer_set[0].manufacturer_website,
+          manufacturer_vendor: lastTool.manufacturer_set[0].manufacturer_vendor,
+          tool: newToolId,
+        }
+      )
+
+      let createNewQuantities = await axios.post(
+        BASE_URL + "quantity_requirements/", {
+          quantity_requested: 10,
+          quantity_minimum: 0,
+          tool: newToolId,
+        }
+      )
+
+      let createNewToolType = await axios.post(
+        BASE_URL + "tool_types/", {
+          tool_type: lastTool.tool_type_set[0].tool_type,
+          tool: newToolId,
+        }
+      )
+
+      let createNewMaxSharpen = await axios.post(
+        BASE_URL + "max_sharpens/",{
+          times_sharpened: 0,
+          max_sharpen_amount: lastTool.max_sharpen_set[0].max_sharpen_amount,
+          tool: newToolId,
+        }
+      )
+
+      let createNewService = await axios.post(
+        BASE_URL + "services/", {
+          tool: newToolId,
+        }
+      )
     } catch (err) {
       console.log(err);
     }
-    //grab the tool serial, slice it, convert number to integer
-    //add 1 to the number, convert back to string
-    //combine number and string and set to new serial.
-    // try{
-    //   const addNewTool = await axios.post(BASE_URL)
-    // }
-    // catch(err){
-    //   console.log(err);
-    // }
+    //set last tool array back to null
+    setLastTool([]);
+    //fetch the tools list as well
+    fetchTools();
   };
   const makeTool = () => {
     setToggle(!toggle);
