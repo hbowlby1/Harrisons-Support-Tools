@@ -22,6 +22,7 @@ function ToolAccordion(props) {
       const tableBody = tools.map((tool) => {
         return (
           <tr key={tool.id}>
+            {props.isDeleting ? <td onClick={() => props.deleteItem(tool.id)}>X</td> : <></>}
             <td>
               <input
                 type="checkbox"
@@ -305,12 +306,13 @@ function ToolAccordion(props) {
         );
       });
       return (
-        <Accordion.Item key={index} eventKey="0">
+        <Accordion.Item key={index} eventKey={index}>
           <Accordion.Header>{toolClass}</Accordion.Header>
           <Accordion.Body>
             <Table striped="columns" size="sm" responsive hover>
               <thead>
                 <tr>
+                  {props.isDeleting ? <th>Delete</th> : <></>}
                   <th>Active</th>
                   <th>Tool Name</th>
                   <th>Serial number</th>
@@ -345,7 +347,7 @@ function ToolAccordion(props) {
                 <Button size="sm" variant="warning" onClick={props.editing}>
                   Edit
                 </Button>
-                <Button size="sm" variant="danger">
+                <Button size="sm" variant="danger" onClick={props.handleDelete}>
                   Delete
                 </Button>
               </ButtonGroup>

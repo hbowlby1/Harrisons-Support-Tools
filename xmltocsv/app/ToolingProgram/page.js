@@ -130,7 +130,6 @@ function page() {
         (lastToolId) => lastTool[lastToolId]
       );
       setLastTool(lastToolArray);
-      console.log(lastTool);
 
       //grab the tool serial, slice it, convert number to integer
       //add 1 to the number, convert back to string
@@ -141,7 +140,6 @@ function page() {
       num += 1;
       let newNumPart = num.toString().padStart(3, "0");
       let newSerialNumber = serialPrefix + newNumPart;
-      console.log(lastTool.tool_serial_class);
       //end of serial generation
 
       let createCurrentTool = await axios.post(
@@ -516,6 +514,17 @@ function page() {
     setEditedMaxSharpen([]);
   };
 
+  //delete items
+  const handleDelete = () => {
+    setIsDeleting(!isDeleting);
+  }
+
+  const deleteItem = async (toolId) => {
+    const deletedTool = await axios.delete(BASE_URL + `tools/${toolId}/`);
+    console.log(`${toolId} has been deleted`)
+    fetchTools();
+  }
+
   return (
     <>
       <TheNav />
@@ -553,6 +562,9 @@ function page() {
           isEditing={isEditing}
           readOnly={readOnly}
           updateTools={updateTools}
+          isDeleting={isDeleting}
+          handleDelete={handleDelete}
+          deleteItem={deleteItem}
         />
       )}
     </>
