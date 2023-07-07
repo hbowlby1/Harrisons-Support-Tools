@@ -5,7 +5,12 @@ import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Container from "react-bootstrap/Container";
 
+import { useState } from "react";
+
+import {hitMax, centerText} from "../styles/ToolAccordion.module.css";
+
 function ToolAccordion(props) {
+  const [toolLength, setToolLength] = useState(0);
   // Group tools by their serial class
   const toolsByClass = props.toolList.reduce((groups, tool) => {
     const toolClass = tool.tool_serial_class.tool_class;
@@ -15,14 +20,30 @@ function ToolAccordion(props) {
     groups[toolClass].push(tool);
     return groups;
   }, {});
-
   // Create an Accordion.Item for each tool class
   const toolAccordions = Object.entries(toolsByClass).map(
     ([toolClass, tools], index) => {
       const tableBody = tools.map((tool) => {
         return (
-          <tr key={tool.id}>
-            {props.isDeleting ? <td onClick={() => props.deleteItem(tool.id)}>X</td> : <></>}
+          <tr
+            key={tool.id}
+            className={
+              tool.max_sharpen_set[0].times_sharpened ===
+              tool.max_sharpen_set[0].max_sharpen_amount
+                ? hitMax
+                : null
+            }
+          >
+            {props.isDeleting ? (
+              <td
+                onClick={() => props.deleteItem(tool.id)}
+                style={{ cursor: "pointer", color: "red" }}
+              >
+                X
+              </td>
+            ) : (
+              <></>
+            )}
             <td>
               <input
                 type="checkbox"
@@ -307,9 +328,9 @@ function ToolAccordion(props) {
       });
       return (
         <Accordion.Item key={index} eventKey={index}>
-          <Accordion.Header>{toolClass}</Accordion.Header>
+          <Accordion.Header>{toolClass}({toolsByClass.length})</Accordion.Header>
           <Accordion.Body>
-            <Table striped="columns" size="sm" responsive hover>
+            <Table striped="columns" size="sm" responsive hover className={centerText}>
               <thead>
                 <tr>
                   {props.isDeleting ? <th>Delete</th> : <></>}
@@ -339,7 +360,7 @@ function ToolAccordion(props) {
               <ButtonGroup
                 key={index}
                 aria-label="function buttons"
-                style={{ margin: "0 50%" }}
+                style={{ margin: "0 auto" }}
               >
                 <Button size="sm" onClick={() => props.newTool(toolClass)}>
                   Add
@@ -347,12 +368,20 @@ function ToolAccordion(props) {
                 <Button size="sm" variant="warning" onClick={props.editing}>
                   Edit
                 </Button>
-                <Button size="sm" variant="danger" onClick={props.handleDelete}>
-                  Delete
-                </Button>
+                {props.isDeleting ? (
+                  <Button onClick={props.handleDelete}>Done</Button>
+                ) : (
+                  <Button
+                    size="sm"
+                    variant="danger"
+                    onClick={props.handleDelete}
+                  >
+                    Delete
+                  </Button>
+                )}
               </ButtonGroup>
             ) : (
-              <ButtonGroup style={{ margin: "0 50%" }}>
+              <ButtonGroup style={{ margin: "0 auto" }}>
                 <Button variant="success" size="md" onClick={props.updateTools}>
                   Update
                 </Button>
@@ -369,7 +398,7 @@ function ToolAccordion(props) {
 
   return (
     // <Container>
-    <Accordion defaultActiveKey="0">{toolAccordions}</Accordion>
+    <Accordion defaultActiveKey="0" style={{"width":"95%", "margin": "0 auto"}}>{toolAccordions}</Accordion>
     // </Container>
   );
 }
