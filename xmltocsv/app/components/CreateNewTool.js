@@ -262,7 +262,7 @@ function CreateNewTool(props) {
               <Form.Control
                 type="input"
                 placeholder="Enter Manufacturer Name"
-                name="manufacturer.name"
+                name="manufacturer.manufacturer_name"
                 onChange={handleInput}
               />
             </FloatingLabel>

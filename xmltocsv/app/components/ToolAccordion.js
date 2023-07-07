@@ -30,8 +30,8 @@ function ToolAccordion(props) {
             className={
               tool.max_sharpen_set[0].times_sharpened ===
               tool.max_sharpen_set[0].max_sharpen_amount
-                ? hitMax
-                : null
+                ? (hitMax)
+                : (null)
             }
           >
             {props.isDeleting ? (
@@ -328,7 +328,7 @@ function ToolAccordion(props) {
       });
       return (
         <Accordion.Item key={index} eventKey={index}>
-          <Accordion.Header>{toolClass}({toolsByClass.length})</Accordion.Header>
+          <Accordion.Header>{toolClass} ({tools.length})</Accordion.Header>
           <Accordion.Body>
             <Table striped="columns" size="sm" responsive hover className={centerText}>
               <thead>
