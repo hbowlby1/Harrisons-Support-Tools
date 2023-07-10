@@ -4,7 +4,7 @@ from django.utils import timezone
 # Create your models here.
 class Tool(models.Model):
     tool_name = models.CharField(max_length=45, null=False)
-    tool_serial_class = models.ForeignKey('ToolSerialClass', on_delete=models.SET_NULL, null=True, blank=True)
+    tool_serial_class = models.ForeignKey('ToolSerialClass', on_delete=models.CASCADE, null=True, blank=True)
     tool_serial = models.CharField(max_length=45, unique=True)
     part_number = models.CharField(max_length=45, null=False)
     tool_quantity = models.IntegerField(null=False)
@@ -56,6 +56,14 @@ class Tool(models.Model):
                 max_sharpen.save()
             except Max_Sharpen.DoesNotExist:
                 pass
+
+    #delete serial class if all tools are no longer associated with it
+    def delete(self, *args, **kwargs):
+        tool_serial_class = self.tool_serial_class
+        super(Tool, self).delete(*args, **kwargs)
+
+        if not Tool.objects.filter(tool_serial_class=tool_serial_class).exists():
+            tool_serial_class.delete()
     
     def __str__(self):
         return f"{self.id}-{self.tool_name}-{self.tool_serial}-{self.tool_quantity}-{self.tool_is_active}"

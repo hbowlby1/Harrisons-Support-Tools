@@ -5,9 +5,15 @@ import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Container from "react-bootstrap/Container";
 
+// react imports
 import { useState } from "react";
 
-import {hitMax, centerText} from "../styles/ToolAccordion.module.css";
+//custom CSS imports
+import {
+  hitMax,
+  centerText,
+  inputWidth,
+} from "../styles/ToolAccordion.module.css";
 
 function ToolAccordion(props) {
   const [toolLength, setToolLength] = useState(0);
@@ -30,8 +36,8 @@ function ToolAccordion(props) {
             className={
               tool.max_sharpen_set[0].times_sharpened ===
               tool.max_sharpen_set[0].max_sharpen_amount
-                ? (hitMax)
-                : (null)
+                ? hitMax
+                : null
             }
           >
             {props.isDeleting ? (
@@ -328,9 +334,17 @@ function ToolAccordion(props) {
       });
       return (
         <Accordion.Item key={index} eventKey={index}>
-          <Accordion.Header>{toolClass} ({tools.length})</Accordion.Header>
+          <Accordion.Header>
+            {toolClass} ({tools.length})
+          </Accordion.Header>
           <Accordion.Body>
-            <Table striped="columns" size="sm" responsive hover className={centerText}>
+            <Table
+              striped="columns"
+              size="sm"
+              responsive
+              hover
+              className={centerText}
+            >
               <thead>
                 <tr>
                   {props.isDeleting ? <th>Delete</th> : <></>}
@@ -354,7 +368,7 @@ function ToolAccordion(props) {
                   <th>Half Life #</th>
                 </tr>
               </thead>
-              <tbody>{tableBody}</tbody>
+              <tbody className={inputWidth}>{tableBody}</tbody>
             </Table>
             {!props.isEditing ? (
               <ButtonGroup
@@ -398,7 +412,9 @@ function ToolAccordion(props) {
 
   return (
     // <Container>
-    <Accordion defaultActiveKey="0" style={{"width":"95%", "margin": "0 auto"}}>{toolAccordions}</Accordion>
+    <Accordion defaultActiveKey="0" style={{ width: "95%", margin: "0 auto" }}>
+      {toolAccordions}
+    </Accordion>
     // </Container>
   );
 }

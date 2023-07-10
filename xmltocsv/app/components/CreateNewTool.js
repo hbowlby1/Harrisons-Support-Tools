@@ -1,11 +1,17 @@
+//react imports
 import { useState } from "react";
 
+// axios imports
 import axios from "axios";
 
+//react bootstrap imports
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
+
+//custom validations imports
+import validationSchemas from "./validations/validators";
 
 function CreateNewTool(props) {
   const BASE_URL = "http://localhost:8000/tool/";
@@ -62,12 +68,34 @@ function CreateNewTool(props) {
       ...inputs,
       tool: {
         ...inputs.tool,
-        tool_serial: inputs.tool.tool_name.trim().substr(0, 4).toUpperCase() + "001",
+        tool_serial:
+          inputs.tool.tool_name.trim().substr(0, 4).toUpperCase() + "001",
         tool_has_half_life: isHalfLifeChecked,
-        tool_requires_match: isRequiresMatchChecked
+        tool_requires_match: isRequiresMatchChecked,
       },
     };
     let createdToolId;
+
+    //handle validation
+    try {
+      // Tool validation
+      await validationSchemas.toolSchema.validateAsync(newInputs.tool);
+      // Machine validation
+      await validationSchemas.machineSchema.validateAsync(newInputs.machine);
+      // Manufacturer validation
+      await validationSchemas.manufacturerSchema.validateAsync(
+        newInputs.manufacturer
+      );
+      // Quantity validation
+      await validationSchemas.quantitySchema.validateAsync(newInputs.quantity);
+      // Tool type validation
+      await validationSchemas.toolTypeSchema.validateAsync(newInputs.toolType);
+      // Sharpen validation
+      await validationSchemas.maxSharpenSchema.validateAsync(newInputs.sharpen);
+    } catch (validationError) {
+      console.error("Validation Error: ", validationError);
+      return; // Stop further execution if validation fails
+    }
     try {
       const toolRes = await axios.post(BASE_URL + "tools/", newInputs.tool);
       createdToolId = toolRes.data.id;
@@ -98,7 +126,6 @@ function CreateNewTool(props) {
     }
     try {
       const quantityWithTool = { ...newInputs.quantity, tool: createdToolId };
-      console.log(quantityWithTool);
       const quantityRes = await axios.post(
         BASE_URL + "quantity_requirements/",
         quantityWithTool
@@ -108,7 +135,6 @@ function CreateNewTool(props) {
     }
     try {
       const toolTypeWithTool = { ...newInputs.toolType, tool: createdToolId };
-      console.log(toolTypeWithTool);
       const toolTypeRes = await axios.post(
         BASE_URL + "tool_types/",
         toolTypeWithTool
