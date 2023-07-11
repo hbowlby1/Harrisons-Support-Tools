@@ -19,6 +19,12 @@ class Tool(models.Model):
     tool_is_active = models.BooleanField(null=False, default=True)
     tool_inactive_date = models.DateTimeField(null=True, blank=True, default=None)
 
+    #to fix the tool update logic when tool_is_out_for_service is updated
+    def __init__(self, *args, **kwargs):
+        super(Tool, self).__init__(*args, **kwargs)
+        #store the original value 
+        self._tool_is_out_for_service_orig = self.tool_is_out_for_service
+
     #override the save to automatically add the tool class
     #check if the tool class already exists
     def save(self, *args, **kwargs):
@@ -44,18 +50,22 @@ class Tool(models.Model):
         elif(self.tool_is_out_for_service == False):
             self.tool_is_out_for_service_date = None         
 
-        #Save the tool first so the foreign key relations are fulfilled
-        super(Tool, self).save(*args, **kwargs)
         
         #checks if the tool has returned and if so add 1 to the sharpen count
-        if(self.tool_is_out_for_service):
+        if(self.tool_is_out_for_service and not self._tool_is_out_for_service_orig):
             #try to get the latest sharpen record
+            print("hit")
             try:
                 max_sharpen = self.max_sharpen_set.latest('id')
                 max_sharpen.times_sharpened += 1
                 max_sharpen.save()
             except Max_Sharpen.DoesNotExist:
                 pass
+
+        #Save the tool first so the foreign key relations are fulfilled
+        super(Tool, self).save(*args, **kwargs)
+        #update original value after instance is saved
+        self._tool_is_out_for_service_orig = self.tool_is_out_for_service
 
     #delete serial class if all tools are no longer associated with it
     def delete(self, *args, **kwargs):
@@ -101,6 +111,12 @@ class Max_Sharpen(models.Model):
     times_sharpened = models.IntegerField(null=False, default=0)
     max_sharpen_amount = models.IntegerField(null=False)
     tool = models.ForeignKey("Tool", on_delete=models.CASCADE)
+
+    #check if the times_sharpened is greater than max
+    def save(self, *args, **kwargs):
+        if(self.times_sharpened >= self.max_sharpen_amount):
+            self.times_sharpened = self.max_sharpen_amount
+        super(Max_Sharpen, self).save(*args, **kwargs)
 
 class Service(models.Model):
     time_to_change = models.BooleanField(null=False, default=False)

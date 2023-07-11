@@ -13,6 +13,7 @@ import {
   hitMax,
   centerText,
   inputWidth,
+  closeToMax,
 } from "../styles/ToolAccordion.module.css";
 
 function ToolAccordion(props) {
@@ -37,6 +38,9 @@ function ToolAccordion(props) {
               tool.max_sharpen_set[0].times_sharpened ===
               tool.max_sharpen_set[0].max_sharpen_amount
                 ? hitMax
+                : tool.max_sharpen_set[0].times_sharpened ===
+                  tool.max_sharpen_set[0].max_sharpen_amount - 1
+                ? closeToMax
                 : null
             }
           >
@@ -108,6 +112,7 @@ function ToolAccordion(props) {
             <td>
               {props.isEditing ? (
                 <input
+                  min="0"
                   name="quantity_required"
                   type="number"
                   onChange={(e) =>
@@ -128,6 +133,7 @@ function ToolAccordion(props) {
             <td>
               {props.isEditing ? (
                 <input
+                  min="0"
                   name="quantity_min"
                   type="number"
                   onChange={(e) =>
@@ -147,6 +153,7 @@ function ToolAccordion(props) {
             <td>
               {props.isEditing ? (
                 <input
+                  min="0"
                   name="tool_quantity"
                   type="number"
                   onChange={(e) =>
@@ -240,6 +247,7 @@ function ToolAccordion(props) {
             <td>
               {props.isEditing ? (
                 <input
+                  min="0"
                   name="times_sharpened"
                   type="number"
                   onChange={(e) =>
@@ -257,6 +265,7 @@ function ToolAccordion(props) {
             <td>
               {props.isEditing ? (
                 <input
+                  min="0"
                   name="max_sharpen_amount"
                   type="number"
                   onChange={(e) =>
@@ -313,6 +322,7 @@ function ToolAccordion(props) {
             <td>
               {props.isEditing && tool.tool_has_half_life ? (
                 <input
+                  min="0"
                   name="tool_half_life_quantity"
                   type="number"
                   onChange={(e) =>
@@ -375,31 +385,35 @@ function ToolAccordion(props) {
                 key={index}
                 aria-label="function buttons"
                 style={{ margin: "0 auto" }}
+                size="sm"
               >
-                <Button size="sm" onClick={() => props.newTool(toolClass)}>
-                  Add
+                <Button onClick={() => props.newTool(toolClass)}>
+                  Quick Add Tool
                 </Button>
-                <Button size="sm" variant="warning" onClick={props.editing}>
+                <Button
+                  variant="secondary"
+                  disabled
+                  onClick={() => props.newTool(toolClass)}
+                >
+                  Add Tool
+                </Button>
+                <Button variant="warning" onClick={props.editing}>
                   Edit
                 </Button>
                 {props.isDeleting ? (
                   <Button onClick={props.handleDelete}>Done</Button>
                 ) : (
-                  <Button
-                    size="sm"
-                    variant="danger"
-                    onClick={props.handleDelete}
-                  >
+                  <Button variant="danger" onClick={props.handleDelete}>
                     Delete
                   </Button>
                 )}
               </ButtonGroup>
             ) : (
-              <ButtonGroup style={{ margin: "0 auto" }}>
-                <Button variant="success" size="md" onClick={props.updateTools}>
+              <ButtonGroup style={{ margin: "0 auto" }} size="sm">
+                <Button variant="success" onClick={props.updateTools}>
                   Update
                 </Button>
-                <Button onClick={props.editing} variant="danger" size="md">
+                <Button onClick={props.editing} variant="danger">
                   Cancel
                 </Button>
               </ButtonGroup>

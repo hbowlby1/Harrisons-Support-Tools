@@ -13,7 +13,6 @@ import Button from "react-bootstrap/Button";
 //component imports
 import TheNav from "@/app/UI/theNav";
 import CreateNewTool from "../components/CreateNewTool";
-//fontawesome imports
 
 //css imports
 
@@ -83,6 +82,7 @@ function page() {
           BASE_URL + `tools/` + toolId + `/`,
           { tool_is_out_for_service: isActive }
         );
+        fetchTools();
       } catch (err) {
         console.error(err);
       }
@@ -210,8 +210,11 @@ function page() {
   };
 
   //this is the function that allows changing of individual tool information
+  // on the main screen
   const onChangeInput = (e, toolId, idObject) => {
     const { name, value } = e.target;
+
+    //Tool type update
     if (name === "tool_type" && idObject.type === "ToolTypeId") {
       console.log(idObject);
       //check if the tool type is in the editedToolType array
@@ -230,6 +233,8 @@ function page() {
           )
         );
       }
+
+      //tool update
     } else if (
       name === "tool_name" ||
       name === "part_number" ||
@@ -254,6 +259,8 @@ function page() {
           )
         );
       }
+
+      //quantity update
     } else if (
       name === "quantity_required" &&
       idObject.type === "quantityReqId"
@@ -528,12 +535,14 @@ function page() {
       >
         Create New Tool
       </Button>
-      <label>Inactive tools (deletes after 30 days)</label>
-      <input
-        type="checkbox"
-        checked={showInactive}
-        onChange={(e) => setShowInactive(e.target.checked)}
-      />
+      <div style={{ marginLeft: "3%" }}>
+        <label style={{padding:"3px"}}>Inactive tools (deletes after 30 days)</label>
+        <input
+          type="checkbox"
+          checked={showInactive}
+          onChange={(e) => setShowInactive(e.target.checked)}
+        />
+      </div>
       {toggle ? (
         <CreateNewTool getTools={fetchTools} toggler={makeTool} />
       ) : (

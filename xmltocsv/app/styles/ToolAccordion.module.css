@@ -2,6 +2,10 @@
     text-align: center;
 }
 
+.closeToMax{
+    background-color: rgba(253, 255, 120, 0.863);
+}
+
 .hitMax{
     background-color: rgba(233, 0, 0, 0.7);
 }
