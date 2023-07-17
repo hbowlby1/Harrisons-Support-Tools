@@ -390,13 +390,13 @@ function ToolAccordion(props) {
                 <Button onClick={() => props.newTool(toolClass)}>
                   Quick Add Tool
                 </Button>
-                <Button
+                {/* <Button
                   variant="secondary"
                   disabled
                   onClick={() => props.newTool(toolClass)}
                 >
                   Add Tool
-                </Button>
+                </Button> */}
                 <Button variant="warning" onClick={props.editing}>
                   Edit
                 </Button>
