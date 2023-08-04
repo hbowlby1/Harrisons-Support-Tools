@@ -34,8 +34,6 @@ function DropZonePage() {
         <Container>
           <DropZone data={data} dispatch={dispatch} />
         </Container>
-
-        <p>Future plan: Automatically convert CSV's to match e.Pic templates</p>
     </>
   );
 }

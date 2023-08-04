@@ -101,7 +101,7 @@ class Quantity_Requirements(models.Model):
     tool = models.ForeignKey("Tool", on_delete=models.CASCADE)
 
 class Tool_Type(models.Model):
-    tool_type = models.CharField(max_length=45, null=False, validators=[MinLengthValidator(4, "Must be 4 characters or more")])
+    tool_type = models.CharField(default=" ", max_length=45, null=False, validators=[MinLengthValidator(4, "Must be 4 characters or more")])
     tool = models.ForeignKey("Tool", on_delete=models.CASCADE)
 
     def __str__(self):
@@ -110,7 +110,7 @@ class Tool_Type(models.Model):
 
 class Max_Sharpen(models.Model):
     times_sharpened = models.IntegerField(null=False, default=0, validators=[MinValueValidator(0, "Value cannot be negative.")])
-    max_sharpen_amount = models.IntegerField(null=False, validators=[MinValueValidator(0, "Value cannot be negative.")])
+    max_sharpen_amount = models.IntegerField(default=1, null=False, validators=[MinValueValidator(0, "Value cannot be negative.")])
     tool = models.ForeignKey("Tool", on_delete=models.CASCADE)
 
     #check if the times_sharpened is greater than max

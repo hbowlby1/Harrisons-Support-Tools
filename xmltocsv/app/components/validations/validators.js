@@ -18,9 +18,7 @@ const validationSchemas = {
 
   manufacturerSchema: Joi.object({
     manufacturer_name: Joi.string().alphanum().min(4).max(45),
-    manufacturer_website: Joi.string().pattern(
-      new RegExp("^(http|https)://[a-zA-Z0-9-.]+.[a-zA-Z]{2,3}(/\\S*)?$")
-    ),
+    manufacturer_website: Joi.string(),
     manufacturer_vendor: Joi.string().alphanum().min(4).max(45),
   }),
 

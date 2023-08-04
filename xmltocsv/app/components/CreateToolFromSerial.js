@@ -43,8 +43,22 @@ function CreateToolFromSerial(props) {
     }
   };
 
+  //checks if the url input already has the https:// or http:// if not, add it
+  const addHttpsProtocol = (url) => {
+    if (!/^https?:\/\//i.test(url)) {
+      url = "https://" + url;
+    }
+    return url;
+  };
+
   const handleInput = (e) => {
     const { name, value } = e.target;
+
+    //adds https:// to the manufacturer website if it's present
+    if (name === "manufacturer.manufacturer_website") {
+      console.log(value);
+      value = addHttpsProtocol(value);
+    }
     const nameParts = name.split("."); // we're assuming names will be like 'tool.tool_name', 'machine.machine_name', etc.
     const mainKey = nameParts[0]; // e.g. 'tool', 'machine', etc.
     const subKey = nameParts[1]; // e.g. 'tool_name', 'machine_name', etc.
@@ -60,7 +74,7 @@ function CreateToolFromSerial(props) {
 
     if (inputs.tool.tool_name.length < 4) {
       console.log("Tool name should be at least 4 characters long!");
-      return;
+      return setValidated(false);
     }
 
     const newInputs = {
@@ -73,6 +87,9 @@ function CreateToolFromSerial(props) {
       },
     };
     let createdToolId;
+
+    //sets current value for validation instead of waiting for rendering
+    let isValid = false;
 
     //handle validation
     try {
@@ -90,76 +107,57 @@ function CreateToolFromSerial(props) {
       await validationSchemas.toolTypeSchema.validateAsync(newInputs.toolType);
       // Sharpen validation
       await validationSchemas.maxSharpenSchema.validateAsync(newInputs.sharpen);
+      isValid = true;
     } catch (validationError) {
       console.error("Validation Error: ", validationError);
-      return; // Stop further execution if validation fails
+      isValid = false;
     }
-    try {
-      const toolRes = await axios.post(BASE_URL + "tools/", newInputs.tool);
-      createdToolId = toolRes.data.id;
-      //setToolId(createdToolId);
-    } catch (err) {
-      console.log(err);
-    } // assuming the server responds with the created tool object which has an id field
-    try {
-      const machineWithTool = { ...newInputs.machine, tool: createdToolId }; // add the tool id to the machine object
-      const machineRes = await axios.post(
-        BASE_URL + "machines/",
-        machineWithTool
-      );
-    } catch (err) {
-      console.log(err);
+    if (isValid) {
+      try {
+        const toolRes = await axios.post(BASE_URL + "tools/", newInputs.tool);
+        createdToolId = toolRes.data.id;
+
+        const machineWithTool = { ...newInputs.machine, tool: createdToolId }; // add the tool id to the machine object
+        const machineRes = await axios.post(
+          BASE_URL + "machines/",
+          machineWithTool
+        );
+        const manufacturerWithTool = {
+          ...newInputs.manufacturer,
+          tool: createdToolId,
+        };
+        const manufacturerRes = await axios.post(
+          BASE_URL + "manufacturers/",
+          manufacturerWithTool
+        );
+        const quantityWithTool = { ...newInputs.quantity, tool: createdToolId };
+        const quantityRes = await axios.post(
+          BASE_URL + "quantity_requirements/",
+          quantityWithTool
+        );
+        const toolTypeWithTool = { ...newInputs.toolType, tool: createdToolId };
+        const toolTypeRes = await axios.post(
+          BASE_URL + "tool_types/",
+          toolTypeWithTool
+        );
+        const sharpenWithTool = { ...newInputs.sharpen, tool: createdToolId };
+        const sharpenRes = await axios.post(
+          BASE_URL + "max_sharpens/",
+          sharpenWithTool
+        );
+        const serviceWithTool = { ...newInputs.service, tool: createdToolId };
+        const serviceRes = await axios.post(
+          BASE_URL + "services/",
+          serviceWithTool
+        );
+      } catch (error) {
+        console.error(error);
+      }
+      props.toggler();
+      props.getTools();
+    } else {
+      return;
     }
-    try {
-      const manufacturerWithTool = {
-        ...newInputs.manufacturer,
-        tool: createdToolId,
-      };
-      const manufacturerRes = await axios.post(
-        BASE_URL + "manufacturers/",
-        manufacturerWithTool
-      );
-    } catch (err) {
-      console.log(err);
-    }
-    try {
-      const quantityWithTool = { ...newInputs.quantity, tool: createdToolId };
-      const quantityRes = await axios.post(
-        BASE_URL + "quantity_requirements/",
-        quantityWithTool
-      );
-    } catch (err) {
-      console.log(err);
-    }
-    try {
-      const toolTypeWithTool = { ...newInputs.toolType, tool: createdToolId };
-      const toolTypeRes = await axios.post(
-        BASE_URL + "tool_types/",
-        toolTypeWithTool
-      );
-    } catch (err) {
-      console.log(err);
-    }
-    try {
-      const sharpenWithTool = { ...newInputs.sharpen, tool: createdToolId };
-      const sharpenRes = await axios.post(
-        BASE_URL + "max_sharpens/",
-        sharpenWithTool
-      );
-    } catch (err) {
-      console.log(err);
-    }
-    try {
-      const serviceWithTool = { ...newInputs.service, tool: createdToolId };
-      const serviceRes = await axios.post(
-        BASE_URL + "services/",
-        serviceWithTool
-      );
-    } catch (error) {
-      console.error(error);
-    }
-    props.toggler();
-    props.getTools();
   };
   return (
     <Form onSubmit={handleSubmit}>
@@ -297,7 +295,7 @@ function CreateToolFromSerial(props) {
             className="mb-3"
           >
             <Form.Control
-              type="url"
+              type="input"
               placeholder="Enter Manufacturer Website"
               name="manufacturer.manufacturer_website"
               onChange={handleInput}
@@ -378,7 +376,7 @@ function CreateToolFromSerial(props) {
             id="matchingTool"
           />
           {/* end matching tool check box */}
-          {/* need to add this to the database so we can match tools. */}
+
           {isRequiresMatchChecked ? (
             <FloatingLabel
               controlId="floatingInputMatching"

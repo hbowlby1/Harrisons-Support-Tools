@@ -9,6 +9,7 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
+import Alert from "react-bootstrap/Alert";
 
 //custom validations imports
 import validationSchemas from "./validations/validators";
@@ -29,8 +30,9 @@ function CreateNewTool(props) {
   const [isHalfLifeChecked, setIsHalfLifeChecked] = useState(false);
   const [isRequiresMatchChecked, setIsRequiresMatchChecked] = useState(false);
   const [errors, setErrors] = useState({});
-  const [toolLength, setToolLength] = useState("");
-  const [displayError, setDsiplayError] = useState("");
+  const [displayError, setDisplayError] = useState("");
+  const [show, setShow] = useState(false);
+  const [validated, setValidated] = useState(false);
 
   const handleHalfLife = (e) => {
     if (e.target.checked) {
@@ -47,8 +49,21 @@ function CreateNewTool(props) {
     }
   };
 
+  //checks if the url input already has the https:// or http:// if not, add it
+  const addHttpsProtocol = (url) => {
+    if (!/^https?:\/\//i.test(url)) {
+      url = "https://" + url;
+    }
+    return url;
+  };
+
   const handleInput = (e) => {
-    const { name, value } = e.target;
+    let { name, value } = e.target;
+    //adds https:// to the manufacturer website if it's present
+    if (name === "manufacturer.manufacturer_website") {
+      console.log(value);
+      value = addHttpsProtocol(value);
+    }
     const nameParts = name.split("."); // we're assuming names will be like 'tool.tool_name', 'machine.machine_name', etc.
     const mainKey = nameParts[0]; // e.g. 'tool', 'machine', etc.
     const subKey = nameParts[1]; // e.g. 'tool_name', 'machine_name', etc.
@@ -63,10 +78,47 @@ function CreateNewTool(props) {
     e.preventDefault();
 
     if (!inputs.tool.tool_name) {
-      setDsiplayError("Nothing was input");
+      setDisplayError("Nothing was input");
+      setShow(true);
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        toolName:
+          "Tool name is required and needs to be at least 4 characters long.",
+        partsNumber:
+          "parts number is required and needs to be at least 3 characters long.",
+        toolQuantity: "Must be 0 or greater.",
+        toolMatch: "Must be at least 3 characters or more.",
+        machine: "Must be at least 4 characters or more.",
+        manufacturer:
+          "manufacturer is required and name must be at least 4 characters long.",
+        website: "must contain https://www (this will be fixed soon)",
+        vendor: "must be at least 4 characters long.",
+        quantity: "Must be 0 or higher.",
+        toolType: "must be 4 characters or more.",
+        sharpen: "Must be 0 or higher.",
+      }));
+      scrollToTop();
     } else if (inputs.tool.tool_name.length < 4) {
-      console.log("Tool name is not 4 characters long or more.");
-      setToolLength("Tool name should be at least 4 characters long!");
+      setDisplayError("Tool name should be at least 4 characters long!");
+      setShow(true);
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        toolName:
+          "Tool name is required and needs to be at least 4 characters long.",
+        partsNumber:
+          "parts number is required and needs to be at least 3 characters long.",
+        toolQuantity: "Must be 0 or greater.",
+        toolMatch: "Must be at least 3 characters or more.",
+        machine: "Must be at least 4 characters or more.",
+        manufacturer:
+          "manufacturer is required and name must be at least 4 characters long.",
+        website: "must contain https://www (this will be fixed soon)",
+        vendor: "must be at least 4 characters long.",
+        quantity: "Must be 0 or higher.",
+        toolType: "must be 4 characters or more.",
+        sharpen: "Must be 0 or higher.",
+      }));
+      scrollToTop();
       return;
     } else {
       const newInputs = {
@@ -84,28 +136,37 @@ function CreateNewTool(props) {
       //resets the validation errors
       setErrors({});
 
-      //handle validation
+      //sets current value for validation instead of waiting for rendering
+      let isValid = true;
 
+      //handle validation
       // Tool validation
       try {
         await validationSchemas.toolSchema.validateAsync(newInputs.tool);
       } catch (validationError) {
+        isValid = false;
+        scrollToTop();
         setErrors((prevErrors) => ({
           ...prevErrors,
-          tool: validationError.message,
+          toolName:
+            "Tool name is required and needs to be at least 4 characters long.",
+          partsNumber:
+            "parts number is required and needs to be at least 3 characters long.",
+          toolQuantity: "Must be 0 or greater.",
+          toolMatch: "Must be at least 3 characters or more.",
         }));
       }
-      console.log(errors.tool);
 
       // Machine validation
       try {
         await validationSchemas.machineSchema.validateAsync(newInputs.machine);
       } catch (validationError) {
+        isValid = false;
+        scrollToTop();
         setErrors((prevErrors) => ({
           ...prevErrors,
-          machine: validationError.message,
+          machine: "Must be at least 4 characters or more.",
         }));
-        console.log("Machine name is too short.");
       }
 
       // Manufacturer validation
@@ -114,9 +175,14 @@ function CreateNewTool(props) {
           newInputs.manufacturer
         );
       } catch (validationError) {
+        isValid = false;
+        scrollToTop();
         setErrors((prevErrors) => ({
           ...prevErrors,
-          manufacturer: validationError.message,
+          manufacturer:
+            "manufacturer is required and name must be at least 4 characters long.",
+          website: "must contain https://www (this will be fixed soon)",
+          vendor: "must be at least 4 characters long.",
         }));
       }
 
@@ -126,9 +192,11 @@ function CreateNewTool(props) {
           newInputs.quantity
         );
       } catch (validationError) {
+        isValid = false;
+        scrollToTop();
         setErrors((prevErrors) => ({
           ...prevErrors,
-          quantity: validationError.message,
+          quantity: "Must be 0 or higher.",
         }));
       }
 
@@ -138,9 +206,11 @@ function CreateNewTool(props) {
           newInputs.toolType
         );
       } catch (validationError) {
+        isValid = false;
+        scrollToTop();
         setErrors((prevErrors) => ({
           ...prevErrors,
-          toolType: validationError.message,
+          toolType: "must be 4 characters or more.",
         }));
       }
       // Sharpen validation
@@ -149,72 +219,169 @@ function CreateNewTool(props) {
           newInputs.sharpen
         );
       } catch (validationError) {
+        isValid = false;
+        scrollToTop();
         setErrors((prevErrors) => ({
           ...prevErrors,
-          sharpen: validationError.message,
+          sharpen: "Must be 0 or higher.",
         }));
-        return; // Stop further execution if validation fails
       }
 
       //start of post codes
+      if (isValid) {
+        try {
+          if (newInputs.tool) {
+            const toolRes = await axios.post(
+              BASE_URL + "tools/",
+              newInputs.tool
+            );
+            createdToolId = toolRes.data.id;
+          }
 
-      try {
-        const toolRes = await axios.post(BASE_URL + "tools/", newInputs.tool);
-        createdToolId = toolRes.data.id;
-        //setToolId(createdToolId);
-        // assuming the server responds with the created tool object which has an id field
+          if (JSON.stringify(newInputs.sharpen) === "{}") {
+            console.log("1")
+            await axios.post(BASE_URL + "max_sharpens/", {
+              times_sharpened: 0,
+              max_sharpen_amount: 1,
+              tool: createdToolId,
+            });
+          } else {
+            const sharpenWithTool = {
+              ...newInputs.sharpen,
+              tool: createdToolId,
+            };
+            const sharpenRes = await axios.post(
+              BASE_URL + "max_sharpens/",
+              sharpenWithTool
+            );
+          }
+          if (JSON.stringify(newInputs.toolType) === "{}") {
+            console.log("2")
+            await axios.post(BASE_URL + "tool_types/", {
+              tool_type: "None",
+              tool: createdToolId,
+            });
+          } else {
+            const toolTypeWithTool = {
+              ...newInputs.toolType,
+              tool: createdToolId,
+            };
+            const toolTypeRes = await axios.post(
+              BASE_URL + "tool_types/",
+              toolTypeWithTool
+            );
+          }
 
-        const machineWithTool = { ...newInputs.machine, tool: createdToolId }; // add the tool id to the machine object
-        const machineRes = await axios.post(
-          BASE_URL + "machines/",
-          machineWithTool
-        );
-        const manufacturerWithTool = {
-          ...newInputs.manufacturer,
-          tool: createdToolId,
-        };
-        const manufacturerRes = await axios.post(
-          BASE_URL + "manufacturers/",
-          manufacturerWithTool
-        );
-        const quantityWithTool = { ...newInputs.quantity, tool: createdToolId };
-        const quantityRes = await axios.post(
-          BASE_URL + "quantity_requirements/",
-          quantityWithTool
-        );
-        const toolTypeWithTool = { ...newInputs.toolType, tool: createdToolId };
-        const toolTypeRes = await axios.post(
-          BASE_URL + "tool_types/",
-          toolTypeWithTool
-        );
-        const sharpenWithTool = { ...newInputs.sharpen, tool: createdToolId };
-        const sharpenRes = await axios.post(
-          BASE_URL + "max_sharpens/",
-          sharpenWithTool
-        );
-        const serviceWithTool = { ...newInputs.service, tool: createdToolId };
-        const serviceRes = await axios.post(
-          BASE_URL + "services/",
-          serviceWithTool
-        );
-        props.toggler();
-        props.getTools();
-      } catch (error) {
-        console.error(error);
+          if (JSON.stringify(newInputs.machine) === "{}") {
+            console.log("3")
+            await axios.post(BASE_URL + "machines/", {
+              machine_name: "None",
+              tool: createdToolId,
+            });
+          } else {
+            const machineWithTool = {
+              ...newInputs.machine,
+              tool: createdToolId,
+            }; // add the tool id to the machine object
+            const machineRes = await axios.post(
+              BASE_URL + "machines/",
+              machineWithTool
+            );
+          }
+
+          if (JSON.stringify(newInputs.manufacturer) === "{}") {
+            console.log("4")
+            await axios.post(BASE_URL + "manufacturers/", {
+              manufacturer_name: "None",
+              manufacturer_website: "https://www.test.com",
+              manufacturer_vendor: "None",
+              tool: createdToolId,
+            });
+          } else {
+            const manufacturerWithTool = {
+              tool: createdToolId,
+              ...newInputs.manufacturer,
+            };
+            const manufacturerRes = await axios.post(
+              BASE_URL + "manufacturers/",
+              manufacturerWithTool
+            );
+          }
+
+          if (JSON.stringify(newInputs.quantity) === "{}") {
+            console.log("5")
+            await axios.post(BASE_URL + "quantity_requirements/", {
+              quantity_requested: 1,
+              quantity_minimum: 0,
+              tool: createdToolId,
+            });
+          } else {
+            const quantityWithTool = {
+              ...newInputs.quantity,
+              tool: createdToolId,
+            };
+            const quantityRes = await axios.post(
+              BASE_URL + "quantity_requirements/",
+              quantityWithTool
+            );
+          }
+
+          if (JSON.stringify(newInputs.service) === "{}") {
+            console.log("6")
+            await axios.post(BASE_URL + "services/", {
+              time_to_change: false,
+              tool_on_order: false,
+              tool: createdToolId,
+            });
+          } else {
+            const serviceWithTool = {
+              ...newInputs.service,
+              tool: createdToolId,
+            };
+            const serviceRes = await axios.post(
+              BASE_URL + "services/",
+              serviceWithTool
+            );
+          }
+          props.toggler();
+          props.getTools();
+        } catch (error) {
+          setShow(true);
+          setDisplayError(
+            "Failed to create tool. Check if tool name already exists or input errors."
+          );
+          scrollToTop();
+        }
       }
     }
   };
 
+  //scrolls back to the top to see the error
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <Container>
-      <Form noValidate onSubmit={handleSubmit}>
+      <Alert
+        variant="danger"
+        show={show}
+        onClose={() => setShow(false)}
+        dismissible
+      >
+        {displayError}
+      </Alert>
+      <Form noValidate onSubmit={handleSubmit} validated={validated}>
         <fieldset className="mt-3">
           <legend>Tool Info</legend>
           {/* tool name */}
           <Form.Group className="mb-3" controlId="formTool">
             <FloatingLabel
               controlId="floatingInputToolName"
-              label="Tool Name"
+              label="Tool Name*"
               className="mb-3"
             >
               <Form.Control
@@ -222,11 +389,11 @@ function CreateNewTool(props) {
                 placeholder="Enter Tool Name"
                 name="tool.tool_name"
                 onChange={handleInput}
-                isInvalid={errors.tool}
+                isInvalid={errors.toolName}
               />
               {/* shows the validation error */}
               <Form.Control.Feedback type="invalid">
-                {toolLength}
+                {errors.toolName}
               </Form.Control.Feedback>
             </FloatingLabel>
             {/* end of tool name */}
@@ -234,7 +401,7 @@ function CreateNewTool(props) {
             {/* parts number */}
             <FloatingLabel
               controlId="floatingInputPartsNumber"
-              label="Parts Number"
+              label="Parts Number*"
               className="mb-3"
             >
               <Form.Control
@@ -242,8 +409,11 @@ function CreateNewTool(props) {
                 placeholder="Enter Part Number"
                 name="tool.part_number"
                 onChange={handleInput}
-                isInvalid={errors.tool}
+                isInvalid={errors.partsNumber}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors.partsNumber}
+              </Form.Control.Feedback>
             </FloatingLabel>
             {/* end of parts number */}
 
@@ -258,15 +428,18 @@ function CreateNewTool(props) {
                 placeholder="Tool Type"
                 name="toolType.tool_type"
                 onChange={handleInput}
-                isInvalid={errors.tool}
+                isInvalid={errors.toolType}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors.toolType}
+              </Form.Control.Feedback>
             </FloatingLabel>
             {/* end of Tool Type */}
 
             {/* quantity */}
             <FloatingLabel
               controlId="floatingInputQuantity"
-              label="Current On Hand Quantity"
+              label="Current On Hand Quantity*"
               className="mb-3"
             >
               <Form.Control
@@ -275,8 +448,11 @@ function CreateNewTool(props) {
                 placeholder="# of Tools"
                 name="tool.tool_quantity"
                 onChange={handleInput}
-                isInvalid={errors.tool}
+                isInvalid={errors.toolQuantity}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors.toolQuantity}
+              </Form.Control.Feedback>
             </FloatingLabel>
             {/* end of quantity */}
 
@@ -295,6 +471,9 @@ function CreateNewTool(props) {
                 isInvalid={errors.quantity}
               />
               <Form.Text>Number of tools you want at all times.</Form.Text>
+              <Form.Control.Feedback type="invalid">
+                {errors.quantity}
+              </Form.Control.Feedback>
             </FloatingLabel>
             {/* end of quantity Requested */}
 
@@ -315,13 +494,16 @@ function CreateNewTool(props) {
               <Form.Text>
                 Minimum Number of tools you want at all times.
               </Form.Text>
+              <Form.Control.Feedback type="invalid">
+                {errors.quantity}
+              </Form.Control.Feedback>
             </FloatingLabel>
             {/* end of quantity Requested */}
 
             {/* machine name */}
             <FloatingLabel
               controlId="floatingInputMachineName"
-              label="Machine(s) Name"
+              label="Machine(s) Name*"
               className="mb-3"
             >
               <Form.Control
@@ -331,6 +513,9 @@ function CreateNewTool(props) {
                 onChange={handleInput}
                 isInvalid={errors.machine}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors.machine}
+              </Form.Control.Feedback>
             </FloatingLabel>
             {/* end of machine name */}
 
@@ -347,6 +532,9 @@ function CreateNewTool(props) {
                 onChange={handleInput}
                 isInvalid={errors.manufacturer}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors.manufacturer}
+              </Form.Control.Feedback>
             </FloatingLabel>
             {/* end of manufacturer name */}
 
@@ -363,6 +551,9 @@ function CreateNewTool(props) {
                 onChange={handleInput}
                 isInvalid={errors.manufacturer}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors.website}
+              </Form.Control.Feedback>
             </FloatingLabel>
             {/* end of manufacturer website */}
 
@@ -379,10 +570,13 @@ function CreateNewTool(props) {
                 onChange={handleInput}
                 isInvalid={errors.manufacturer}
               />
+              <Form.Control.Feedback type="invalid">
+                {errors.vendor}
+              </Form.Control.Feedback>
             </FloatingLabel>
             {/* end of vendor name */}
 
-            {/* quantity Requested*/}
+            {/* max sharpen*/}
             <FloatingLabel
               controlId="floatingInputMaxSharpen"
               label="Max Times to Sharpen"
@@ -395,12 +589,16 @@ function CreateNewTool(props) {
                 name="sharpen.max_sharpen_amount"
                 onChange={handleInput}
                 isInvalid={errors.sharpen}
+                required
               />
+              <Form.Control.Feedback type="invalid">
+                {errors.sharpen}
+              </Form.Control.Feedback>
               <Form.Text>
                 Max amount of times you sharpen the tool before throwing it away
               </Form.Text>
             </FloatingLabel>
-            {/* end of quantity Requested */}
+            {/* end max sharpen */}
 
             {/* half life check box */}
             <Form.Check
@@ -427,6 +625,9 @@ function CreateNewTool(props) {
                   onChange={handleInput}
                   isInvalid={errors.tool}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.toolQuantity}
+                </Form.Control.Feedback>
                 <Form.Text>
                   Amount of half lifes the blade is expected to have.
                 </Form.Text>
@@ -458,6 +659,9 @@ function CreateNewTool(props) {
                   onChange={handleInput}
                   isInvalid={errors.tool}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {errors.toolMatch}
+                </Form.Control.Feedback>
               </FloatingLabel>
             ) : (
               <></>
