@@ -229,6 +229,7 @@ function CreateNewTool(props) {
 
       //start of post codes
       if (isValid) {
+        console.log(newInputs)
         try {
           if (newInputs.tool) {
             const toolRes = await axios.post(
@@ -238,110 +239,63 @@ function CreateNewTool(props) {
             createdToolId = toolRes.data.id;
           }
 
-          if (JSON.stringify(newInputs.sharpen) === "{}") {
-            console.log("1")
+          if (JSON.stringify(newInputs.sharpen) === "{}" || Object.keys(newInputs.sharpen).length >= 1) {
+            console.log('sharpen');
             await axios.post(BASE_URL + "max_sharpens/", {
               times_sharpened: 0,
               max_sharpen_amount: 1,
               tool: createdToolId,
+              ...newInputs.sharpen
             });
-          } else {
-            const sharpenWithTool = {
-              ...newInputs.sharpen,
-              tool: createdToolId,
-            };
-            const sharpenRes = await axios.post(
-              BASE_URL + "max_sharpens/",
-              sharpenWithTool
-            );
           }
-          if (JSON.stringify(newInputs.toolType) === "{}") {
-            console.log("2")
+
+          if (JSON.stringify(newInputs.toolType) === "{}" || Object.keys(newInputs.toolType).length >= 1) {
+            console.log('toolType')
             await axios.post(BASE_URL + "tool_types/", {
               tool_type: "None",
               tool: createdToolId,
+              ...newInputs.toolType
             });
-          } else {
-            const toolTypeWithTool = {
-              ...newInputs.toolType,
-              tool: createdToolId,
-            };
-            const toolTypeRes = await axios.post(
-              BASE_URL + "tool_types/",
-              toolTypeWithTool
-            );
           }
 
-          if (JSON.stringify(newInputs.machine) === "{}") {
-            console.log("3")
+          if (JSON.stringify(newInputs.machine) === "{}" || Object.keys(newInputs.machine).length >= 1) {
+            console.log("machine")
             await axios.post(BASE_URL + "machines/", {
-              machine_name: "None",
+              machine_name: "Default",
               tool: createdToolId,
+              ...newInputs.machine
             });
-          } else {
-            const machineWithTool = {
-              ...newInputs.machine,
-              tool: createdToolId,
-            }; // add the tool id to the machine object
-            const machineRes = await axios.post(
-              BASE_URL + "machines/",
-              machineWithTool
-            );
           }
 
-          if (JSON.stringify(newInputs.manufacturer) === "{}") {
-            console.log("4")
+          if (JSON.stringify(newInputs.manufacturer) === "{}" || Object.keys(newInputs.manufacturer).length >= 1) {
+            console.log("manufacture")
             await axios.post(BASE_URL + "manufacturers/", {
               manufacturer_name: "None",
               manufacturer_website: "https://www.test.com",
               manufacturer_vendor: "None",
               tool: createdToolId,
+              ...newInputs.manufacturer
             });
-          } else {
-            const manufacturerWithTool = {
-              tool: createdToolId,
-              ...newInputs.manufacturer,
-            };
-            const manufacturerRes = await axios.post(
-              BASE_URL + "manufacturers/",
-              manufacturerWithTool
-            );
           }
 
-          if (JSON.stringify(newInputs.quantity) === "{}") {
-            console.log("5")
+          if (JSON.stringify(newInputs.quantity) === "{}" || Object.keys(newInputs.quantity).length >= 1) {
+            console.log('quantity');
             await axios.post(BASE_URL + "quantity_requirements/", {
               quantity_requested: 1,
               quantity_minimum: 0,
               tool: createdToolId,
+              ...newInputs.quantity
             });
-          } else {
-            const quantityWithTool = {
-              ...newInputs.quantity,
-              tool: createdToolId,
-            };
-            const quantityRes = await axios.post(
-              BASE_URL + "quantity_requirements/",
-              quantityWithTool
-            );
           }
 
-          if (JSON.stringify(newInputs.service) === "{}") {
-            console.log("6")
+          if (JSON.stringify(newInputs.service) === "{}" || Object.keys(newInputs.service).length >= 1) {
+            console.log('service');
             await axios.post(BASE_URL + "services/", {
               time_to_change: false,
               tool_on_order: false,
               tool: createdToolId,
+              ...newInputs.service
             });
-          } else {
-            const serviceWithTool = {
-              ...newInputs.service,
-              tool: createdToolId,
-            };
-            const serviceRes = await axios.post(
-              BASE_URL + "services/",
-              serviceWithTool
-            );
           }
           props.toggler();
           props.getTools();

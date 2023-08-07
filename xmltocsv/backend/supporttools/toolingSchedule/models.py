@@ -80,28 +80,28 @@ class Tool(models.Model):
         return f"{self.id}-{self.tool_name}-{self.tool_serial}-{self.tool_quantity}-{self.tool_is_active}"
 
 class Machine(models.Model):
-    machine_name = models.CharField(max_length=45, null=False, validators=[MinLengthValidator(4, "Must be 4 characters or more")])
+    machine_name = models.CharField(default="None", max_length=45, null=False, validators=[MinLengthValidator(4, "Must be 4 characters or more")])
     tool = models.ForeignKey("Tool", on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.machine_name}"
 
 class Manufacturer(models.Model):
-    manufacturer_name = models.CharField(max_length=45, null=False, validators=[MinLengthValidator(4, "Must be 4 characters or more")])
-    manufacturer_website = models.URLField()
-    manufacturer_vendor = models.CharField(max_length=45, null=False, validators=[MinLengthValidator(4, "Must be 4 characters or more")])
+    manufacturer_name = models.CharField(default="None", max_length=45, null=False, validators=[MinLengthValidator(4, "Must be 4 characters or more")])
+    manufacturer_website = models.CharField(default="None", max_length=200)
+    manufacturer_vendor = models.CharField(default="None", max_length=45, null=False, validators=[MinLengthValidator(4, "Must be 4 characters or more")])
     tool = models.ForeignKey("Tool", on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.manufacturer_name}"
 
 class Quantity_Requirements(models.Model):
-    quantity_requested = models.IntegerField(null=False, validators=[MinValueValidator(0, "Value cannot be negative.")])
-    quantity_minimum = models.IntegerField(null=False, validators=[MinValueValidator(0, "Value cannot be negative.")])
+    quantity_requested = models.IntegerField(default=0, null=False, validators=[MinValueValidator(0, "Value cannot be negative.")])
+    quantity_minimum = models.IntegerField(default=0, null=False, validators=[MinValueValidator(0, "Value cannot be negative.")])
     tool = models.ForeignKey("Tool", on_delete=models.CASCADE)
 
 class Tool_Type(models.Model):
-    tool_type = models.CharField(default=" ", max_length=45, null=False, validators=[MinLengthValidator(4, "Must be 4 characters or more")])
+    tool_type = models.CharField(default="", max_length=45, null=False, validators=[MinLengthValidator(4, "Must be 4 characters or more")])
     tool = models.ForeignKey("Tool", on_delete=models.CASCADE)
 
     def __str__(self):

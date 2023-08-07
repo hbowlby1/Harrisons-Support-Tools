@@ -122,12 +122,12 @@ function ToolAccordion(props) {
                     })
                   }
                   placeholder={
-                    tool.quantity_requirements_set[0].quantity_requested
+                    tool.quantity_requirements_set[0]?.quantity_requested || 0
                   }
                   readOnly={props.readOnly}
                 />
               ) : (
-                tool.quantity_requirements_set[0].quantity_requested
+                tool.quantity_requirements_set[0]?.quantity_requested || 0
               )}
             </td>
             <td>
@@ -143,11 +143,11 @@ function ToolAccordion(props) {
                     })
                   }
                   placeholder={
-                    tool.quantity_requirements_set[0].quantity_minimum
+                    tool.quantity_requirements_set[0]?.quantity_minimum || 0
                   }
                 />
               ) : (
-                tool.quantity_requirements_set[0].quantity_minimum
+                tool.quantity_requirements_set[0]?.quantity_minimum || 0
               )}
             </td>
             <td>
@@ -192,7 +192,7 @@ function ToolAccordion(props) {
                   placeholder={tool.machine_set[0].machine_name}
                 />
               ) : (
-                tool.machine_set[0].machine_name
+                tool.machine_set[0]?.machine_name || "None"
               )}
             </td>
             <td>
@@ -206,10 +206,10 @@ function ToolAccordion(props) {
                       id: tool.manufacturer_set[0].id,
                     })
                   }
-                  placeholder={tool.manufacturer_set[0].manufacturer_vendor}
+                  placeholder={tool.manufacturer_set[0]?.manufacturer_vendor || "None"}
                 />
               ) : (
-                tool.manufacturer_set[0].manufacturer_vendor
+                tool.manufacturer_set[0]?.manufacturer_vendor || "None"
               )}
             </td>
             <td>
@@ -224,7 +224,7 @@ function ToolAccordion(props) {
                         id: tool.manufacturer_set[0].id,
                       })
                     }
-                    placeholder={tool.manufacturer_set[0].manufacturer_name}
+                    placeholder={tool.manufacturer_set[0]?.manufacturer_name || "None"}
                   />
                   <input
                     name="manufacturer_website"
@@ -235,12 +235,12 @@ function ToolAccordion(props) {
                         id: tool.manufacturer_set[0].id,
                       })
                     }
-                    placeholder={tool.manufacturer_set[0].manufacturer_website}
+                    placeholder={tool.manufacturer_set[0]?.manufacturer_website || "None"}
                   />
                 </>
               ) : (
-                <a href={tool.manufacturer_set[0].manufacturer_website}>
-                  {tool.manufacturer_set[0].manufacturer_name}
+                <a href={tool.manufacturer_set[0]?.manufacturer_website || "None"}>
+                  {tool.manufacturer_set[0]?.manufacturer_name || "None"}
                 </a>
               )}
             </td>
@@ -256,10 +256,10 @@ function ToolAccordion(props) {
                       id: tool.max_sharpen_set[0].id,
                     })
                   }
-                  placeholder={tool.max_sharpen_set[0].times_sharpened}
+                  placeholder={tool.max_sharpen_set[0]?.times_sharpened || 0}
                 />
               ) : (
-                tool.max_sharpen_set[0].times_sharpened
+                tool.max_sharpen_set[0]?.times_sharpened || 0
               )}
             </td>
             <td>

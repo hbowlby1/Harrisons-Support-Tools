@@ -17,6 +17,7 @@ import CreateNewTool from "../components/CreateNewTool";
 //css imports
 
 import { useState, useEffect } from "react";
+import OutForService from "../components/OutForService";
 
 function page() {
   //set state for the tools
@@ -38,6 +39,7 @@ function page() {
   const [editedSite, setEditedSite] = useState([]);
   const [editedSharpen, setEditedSharpen] = useState([]);
   const [editedMaxSharpen, setEditedMaxSharpen] = useState([]);
+  const [showServiceList, setShowServiceList] = useState(false);
 
   //get the current date
   const date = new Date();
@@ -213,9 +215,10 @@ function page() {
   // on the main screen
   const onChangeInput = (e, toolId, idObject) => {
     const { name, value } = e.target;
+    console.log(name + ":" + value + ":" + idObject.type);
 
     //Tool type update
-    if (name === "tool_type" && idObject.type === "ToolTypeId") {
+    if (name === "tool_type" && idObject.type === "toolTypeId") {
       console.log(idObject);
       //check if the tool type is in the editedToolType array
       if (!editedToolType.find((toolType) => toolType.id === idObject.id)) {
@@ -407,12 +410,12 @@ function page() {
     for (let tool of editedTool) {
       try {
         //patch the tool
-        let test = await axios.patch(BASE_URL + "tools/" + tool.id + "/", tool);
-        console.log(test);
+        await axios.patch(BASE_URL + "tools/" + tool.id + "/", tool);
       } catch (err) {
         console.error(err);
       }
     }
+    console.log(editedToolType);
     for (let toolType of editedToolType) {
       try {
         await axios.patch(BASE_URL + "tool_types/" + toolType.id + "/", {
@@ -536,12 +539,19 @@ function page() {
         Create New Tool
       </Button>
       <div style={{ marginLeft: "3%" }}>
-        <label style={{padding:"3px"}}>Inactive tools (deletes after 30 days)</label>
+        <label style={{ padding: "3px" }}>Inactive tools</label>
         <input
           type="checkbox"
           checked={showInactive}
           onChange={(e) => setShowInactive(e.target.checked)}
         />
+        <span> | </span>
+        <label style={{ padding: "3px" }}>Tools Out for Service</label>
+        <input
+          type="checkbox"
+          checked={showServiceList}
+          onChange={(e) => setShowServiceList(e.target.checked)}
+        ></input>
       </div>
       {toggle ? (
         <CreateNewTool getTools={fetchTools} toggler={makeTool} />
@@ -555,19 +565,27 @@ function page() {
           style={{ margin: "auto 50%" }}
         />
       ) : (
-        <ToolAccordion
-          toolList={tools}
-          newTool={addTool}
-          activeFilter={checkActive}
-          changeData={onChangeInput}
-          editing={Editing}
-          isEditing={isEditing}
-          readOnly={readOnly}
-          updateTools={updateTools}
-          isDeleting={isDeleting}
-          handleDelete={handleDelete}
-          deleteItem={deleteItem}
-        />
+        <>
+        <h3 style={{textAlign:"center"}}>Active Tools</h3>
+          <ToolAccordion
+            toolList={tools}
+            newTool={addTool}
+            activeFilter={checkActive}
+            changeData={onChangeInput}
+            editing={Editing}
+            isEditing={isEditing}
+            readOnly={readOnly}
+            updateTools={updateTools}
+            isDeleting={isDeleting}
+            handleDelete={handleDelete}
+            deleteItem={deleteItem}
+          />
+          {showServiceList ? (
+            <OutForService 
+            toolList={tools}
+            activeFilter={checkActive} />
+          ): <></>}
+        </>
       )}
     </>
   );

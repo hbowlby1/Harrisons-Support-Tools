@@ -13,7 +13,7 @@ const validationSchemas = {
   }),
 
   machineSchema: Joi.object({
-    machine_name: Joi.string().alphanum().min(4).max(45).required(),
+    machine_name: Joi.string().alphanum().min(3).max(45),
   }),
 
   manufacturerSchema: Joi.object({
