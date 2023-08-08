@@ -76,6 +76,8 @@ function page() {
     }
   }, [isFetch]);
 
+  //checks if the out for service and active check boxes are set
+  //then updates the state varibles.
   const checkActive = async (e, toolId, isActive) => {
     const { name } = await e.target;
     if (name === "outForService") {
@@ -566,7 +568,7 @@ function page() {
         />
       ) : (
         <>
-        <h3 style={{textAlign:"center"}}>Active Tools</h3>
+          <h3 style={{ textAlign: "center" }}>Active Tools</h3>
           <ToolAccordion
             toolList={tools}
             newTool={addTool}
@@ -581,10 +583,10 @@ function page() {
             deleteItem={deleteItem}
           />
           {showServiceList ? (
-            <OutForService 
-            toolList={tools}
-            activeFilter={checkActive} />
-          ): <></>}
+            <OutForService toolList={tools} activeFilter={checkActive} />
+          ) : (
+            <></>
+          )}
         </>
       )}
     </>
