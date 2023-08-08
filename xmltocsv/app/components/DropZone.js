@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { parseStringPromise } from "xml2js";
 import { flatten } from "flat";
-import { json2csv } from "json-2-csv";
+//import { json2csv } from "json-2-csv";
 import Image from "next/image";
 import FilePreview from "./FilePreview";
 import styles from "../styles/DropZone.module.css";
@@ -83,7 +83,7 @@ const DropZone = ({ data, dispatch }) => {
     //create an array to store the download links
     const downloadLinks = [];
 
-    //loop through each file and convert them to CSV
+    //loop through each file and convert them to JSON
     for (const file of files) {
       try {
         //initialize FileReader to read the file
@@ -94,15 +94,12 @@ const DropZone = ({ data, dispatch }) => {
           try {
             //parse the XML to JSON
             const jsonObj = await parseStringPromise(e.target.result);
-
-            //flattens the JSON into a less complex structure
-            const flatJSON = flatten(jsonObj);
-
-            //converts the flatJSON to a CSV string
-            const csvString = await json2csv(flatJSON);
+            
+            //convert the json to string
+            const jsonToString = await JSON.stringify(jsonObj);
 
             //create blob from CSV string
-            const blob = new Blob([csvString], { type: "text/csv" });
+            const blob = new Blob([jsonToString], { type: "text/json" });
 
             //create a download link for the file
             const url = URL.createObjectURL(blob);
@@ -155,11 +152,11 @@ const DropZone = ({ data, dispatch }) => {
           {link.map((downloadLinks, index) => (
             <a
               href={downloadLinks}
-              download={`File${index + 1}.csv`}
+              download={`${data.fileList[index].name}${index + 1}.json`}
               key={index}
             >
               <div className={styles.downloadBtns}>
-                <Button>Download {data.fileList[index].name}.csv</Button>
+                <Button>Download {data.fileList[index].name}.json</Button>
               </div>
             </a>
           ))}

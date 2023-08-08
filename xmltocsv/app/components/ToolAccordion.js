@@ -5,7 +5,19 @@ import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Container from "react-bootstrap/Container";
 
+// react imports
+import { useState } from "react";
+
+//custom CSS imports
+import {
+  hitMax,
+  centerText,
+  inputWidth,
+  closeToMax,
+} from "../styles/ToolAccordion.module.css";
+
 function ToolAccordion(props) {
+  const [toolLength, setToolLength] = useState(0);
   // Group tools by their serial class
   const toolsByClass = props.toolList.reduce((groups, tool) => {
     const toolClass = tool.tool_serial_class.tool_class;
@@ -15,14 +27,33 @@ function ToolAccordion(props) {
     groups[toolClass].push(tool);
     return groups;
   }, {});
-
   // Create an Accordion.Item for each tool class
   const toolAccordions = Object.entries(toolsByClass).map(
     ([toolClass, tools], index) => {
       const tableBody = tools.map((tool) => {
         return (
-          <tr key={tool.id}>
-            {props.isDeleting ? <td onClick={() => props.deleteItem(tool.id)}>X</td> : <></>}
+          <tr
+            key={tool.id}
+            className={
+              tool.max_sharpen_set[0].times_sharpened ===
+              tool.max_sharpen_set[0].max_sharpen_amount
+                ? hitMax
+                : tool.max_sharpen_set[0].times_sharpened ===
+                  tool.max_sharpen_set[0].max_sharpen_amount - 1
+                ? closeToMax
+                : null
+            }
+          >
+            {props.isDeleting ? (
+              <td
+                onClick={() => props.deleteItem(tool.id)}
+                style={{ cursor: "pointer", color: "red" }}
+              >
+                X
+              </td>
+            ) : (
+              <></>
+            )}
             <td>
               <input
                 type="checkbox"
@@ -81,6 +112,7 @@ function ToolAccordion(props) {
             <td>
               {props.isEditing ? (
                 <input
+                  min="0"
                   name="quantity_required"
                   type="number"
                   onChange={(e) =>
@@ -90,17 +122,18 @@ function ToolAccordion(props) {
                     })
                   }
                   placeholder={
-                    tool.quantity_requirements_set[0].quantity_requested
+                    tool.quantity_requirements_set[0]?.quantity_requested || 0
                   }
                   readOnly={props.readOnly}
                 />
               ) : (
-                tool.quantity_requirements_set[0].quantity_requested
+                tool.quantity_requirements_set[0]?.quantity_requested || 0
               )}
             </td>
             <td>
               {props.isEditing ? (
                 <input
+                  min="0"
                   name="quantity_min"
                   type="number"
                   onChange={(e) =>
@@ -110,16 +143,17 @@ function ToolAccordion(props) {
                     })
                   }
                   placeholder={
-                    tool.quantity_requirements_set[0].quantity_minimum
+                    tool.quantity_requirements_set[0]?.quantity_minimum || 0
                   }
                 />
               ) : (
-                tool.quantity_requirements_set[0].quantity_minimum
+                tool.quantity_requirements_set[0]?.quantity_minimum || 0
               )}
             </td>
             <td>
               {props.isEditing ? (
                 <input
+                  min="0"
                   name="tool_quantity"
                   type="number"
                   onChange={(e) =>
@@ -158,7 +192,7 @@ function ToolAccordion(props) {
                   placeholder={tool.machine_set[0].machine_name}
                 />
               ) : (
-                tool.machine_set[0].machine_name
+                tool.machine_set[0]?.machine_name || "None"
               )}
             </td>
             <td>
@@ -172,10 +206,10 @@ function ToolAccordion(props) {
                       id: tool.manufacturer_set[0].id,
                     })
                   }
-                  placeholder={tool.manufacturer_set[0].manufacturer_vendor}
+                  placeholder={tool.manufacturer_set[0]?.manufacturer_vendor || "None"}
                 />
               ) : (
-                tool.manufacturer_set[0].manufacturer_vendor
+                tool.manufacturer_set[0]?.manufacturer_vendor || "None"
               )}
             </td>
             <td>
@@ -190,7 +224,7 @@ function ToolAccordion(props) {
                         id: tool.manufacturer_set[0].id,
                       })
                     }
-                    placeholder={tool.manufacturer_set[0].manufacturer_name}
+                    placeholder={tool.manufacturer_set[0]?.manufacturer_name || "None"}
                   />
                   <input
                     name="manufacturer_website"
@@ -201,18 +235,19 @@ function ToolAccordion(props) {
                         id: tool.manufacturer_set[0].id,
                       })
                     }
-                    placeholder={tool.manufacturer_set[0].manufacturer_website}
+                    placeholder={tool.manufacturer_set[0]?.manufacturer_website || "None"}
                   />
                 </>
               ) : (
-                <a href={tool.manufacturer_set[0].manufacturer_website}>
-                  {tool.manufacturer_set[0].manufacturer_name}
+                <a href={tool.manufacturer_set[0]?.manufacturer_website || "None"}>
+                  {tool.manufacturer_set[0]?.manufacturer_name || "None"}
                 </a>
               )}
             </td>
             <td>
               {props.isEditing ? (
                 <input
+                  min="0"
                   name="times_sharpened"
                   type="number"
                   onChange={(e) =>
@@ -221,15 +256,16 @@ function ToolAccordion(props) {
                       id: tool.max_sharpen_set[0].id,
                     })
                   }
-                  placeholder={tool.max_sharpen_set[0].times_sharpened}
+                  placeholder={tool.max_sharpen_set[0]?.times_sharpened || 0}
                 />
               ) : (
-                tool.max_sharpen_set[0].times_sharpened
+                tool.max_sharpen_set[0]?.times_sharpened || 0
               )}
             </td>
             <td>
               {props.isEditing ? (
                 <input
+                  min="0"
                   name="max_sharpen_amount"
                   type="number"
                   onChange={(e) =>
@@ -286,6 +322,7 @@ function ToolAccordion(props) {
             <td>
               {props.isEditing && tool.tool_has_half_life ? (
                 <input
+                  min="0"
                   name="tool_half_life_quantity"
                   type="number"
                   onChange={(e) =>
@@ -307,9 +344,17 @@ function ToolAccordion(props) {
       });
       return (
         <Accordion.Item key={index} eventKey={index}>
-          <Accordion.Header>{toolClass}</Accordion.Header>
+          <Accordion.Header>
+            {toolClass} ({tools.length})
+          </Accordion.Header>
           <Accordion.Body>
-            <Table striped="columns" size="sm" responsive hover>
+            <Table
+              striped="columns"
+              size="sm"
+              responsive
+              hover
+              className={centerText}
+            >
               <thead>
                 <tr>
                   {props.isDeleting ? <th>Delete</th> : <></>}
@@ -333,30 +378,42 @@ function ToolAccordion(props) {
                   <th>Half Life #</th>
                 </tr>
               </thead>
-              <tbody>{tableBody}</tbody>
+              <tbody className={inputWidth}>{tableBody}</tbody>
             </Table>
             {!props.isEditing ? (
               <ButtonGroup
                 key={index}
                 aria-label="function buttons"
-                style={{ margin: "0 50%" }}
+                style={{ margin: "0 auto" }}
+                size="sm"
               >
-                <Button size="sm" onClick={() => props.newTool(toolClass)}>
-                  Add
+                <Button onClick={() => props.newTool(toolClass)}>
+                  Quick Add Tool
                 </Button>
-                <Button size="sm" variant="warning" onClick={props.editing}>
+                {/* <Button
+                  variant="secondary"
+                  disabled
+                  onClick={() => props.newTool(toolClass)}
+                >
+                  Add Tool
+                </Button> */}
+                <Button variant="warning" onClick={props.editing}>
                   Edit
                 </Button>
-                <Button size="sm" variant="danger" onClick={props.handleDelete}>
-                  Delete
-                </Button>
+                {props.isDeleting ? (
+                  <Button onClick={props.handleDelete}>Done</Button>
+                ) : (
+                  <Button variant="danger" onClick={props.handleDelete}>
+                    Delete
+                  </Button>
+                )}
               </ButtonGroup>
             ) : (
-              <ButtonGroup style={{ margin: "0 50%" }}>
-                <Button variant="success" size="md" onClick={props.updateTools}>
+              <ButtonGroup style={{ margin: "0 auto" }} size="sm">
+                <Button variant="success" onClick={props.updateTools}>
                   Update
                 </Button>
-                <Button onClick={props.editing} variant="danger" size="md">
+                <Button onClick={props.editing} variant="danger">
                   Cancel
                 </Button>
               </ButtonGroup>
@@ -369,7 +426,9 @@ function ToolAccordion(props) {
 
   return (
     // <Container>
-    <Accordion defaultActiveKey="0">{toolAccordions}</Accordion>
+    <Accordion defaultActiveKey="0" style={{ width: "95%", margin: "0 auto" }}>
+      {toolAccordions}
+    </Accordion>
     // </Container>
   );
 }

@@ -13,11 +13,11 @@ import Button from "react-bootstrap/Button";
 //component imports
 import TheNav from "@/app/UI/theNav";
 import CreateNewTool from "../components/CreateNewTool";
-//fontawesome imports
 
 //css imports
 
 import { useState, useEffect } from "react";
+import OutForService from "../components/OutForService";
 
 function page() {
   //set state for the tools
@@ -39,6 +39,7 @@ function page() {
   const [editedSite, setEditedSite] = useState([]);
   const [editedSharpen, setEditedSharpen] = useState([]);
   const [editedMaxSharpen, setEditedMaxSharpen] = useState([]);
+  const [showServiceList, setShowServiceList] = useState(false);
 
   //get the current date
   const date = new Date();
@@ -83,6 +84,7 @@ function page() {
           BASE_URL + `tools/` + toolId + `/`,
           { tool_is_out_for_service: isActive }
         );
+        fetchTools();
       } catch (err) {
         console.error(err);
       }
@@ -142,62 +144,55 @@ function page() {
       let newSerialNumber = serialPrefix + newNumPart;
       //end of serial generation
 
-      let createCurrentTool = await axios.post(
-        BASE_URL + 'tools/', {
-          tool_name: lastTool.tool_name,
-          tool_serial_class: lastTool.tool_serial_class,
-          tool_serial: newSerialNumber,
-          part_number: lastTool.part_number,
-          tool_quantity: 0,
-        }
-      )
+      let createCurrentTool = await axios.post(BASE_URL + "tools/", {
+        tool_name: lastTool.tool_name,
+        tool_serial_class: lastTool.tool_serial_class,
+        tool_serial: newSerialNumber,
+        part_number: lastTool.part_number,
+        tool_quantity: 0,
+      });
       //gets the ID of the newly created tool
-      let newToolId = createCurrentTool.data.id
+      let newToolId = createCurrentTool.data.id;
 
-      let createCurrentMachine = await axios.post(
-        BASE_URL + "machines/", {
-          machine_name: lastTool.machine_set[0].machine_name,
-          tool: newToolId,
-        }
-      )
+      let createCurrentMachine = await axios.post(BASE_URL + "machines/", {
+        machine_name: lastTool.machine_set[0].machine_name,
+        tool: newToolId,
+      });
 
       let createNewManufacturer = await axios.post(
-        BASE_URL + "manufacturers/", {
+        BASE_URL + "manufacturers/",
+        {
           manufacturer_name: lastTool.manufacturer_set[0].manufacturer_name,
-          manufacturer_website: lastTool.manufacturer_set[0].manufacturer_website,
+          manufacturer_website:
+            lastTool.manufacturer_set[0].manufacturer_website,
           manufacturer_vendor: lastTool.manufacturer_set[0].manufacturer_vendor,
           tool: newToolId,
         }
-      )
+      );
 
       let createNewQuantities = await axios.post(
-        BASE_URL + "quantity_requirements/", {
+        BASE_URL + "quantity_requirements/",
+        {
           quantity_requested: 10,
           quantity_minimum: 0,
           tool: newToolId,
         }
-      )
+      );
 
-      let createNewToolType = await axios.post(
-        BASE_URL + "tool_types/", {
-          tool_type: lastTool.tool_type_set[0].tool_type,
-          tool: newToolId,
-        }
-      )
+      let createNewToolType = await axios.post(BASE_URL + "tool_types/", {
+        tool_type: lastTool.tool_type_set[0].tool_type,
+        tool: newToolId,
+      });
 
-      let createNewMaxSharpen = await axios.post(
-        BASE_URL + "max_sharpens/",{
-          times_sharpened: 0,
-          max_sharpen_amount: lastTool.max_sharpen_set[0].max_sharpen_amount,
-          tool: newToolId,
-        }
-      )
+      let createNewMaxSharpen = await axios.post(BASE_URL + "max_sharpens/", {
+        times_sharpened: 0,
+        max_sharpen_amount: lastTool.max_sharpen_set[0].max_sharpen_amount,
+        tool: newToolId,
+      });
 
-      let createNewService = await axios.post(
-        BASE_URL + "services/", {
-          tool: newToolId,
-        }
-      )
+      let createNewService = await axios.post(BASE_URL + "services/", {
+        tool: newToolId,
+      });
     } catch (err) {
       console.log(err);
     }
@@ -217,9 +212,13 @@ function page() {
   };
 
   //this is the function that allows changing of individual tool information
+  // on the main screen
   const onChangeInput = (e, toolId, idObject) => {
     const { name, value } = e.target;
-    if (name === "tool_type" && idObject.type === "ToolTypeId") {
+    console.log(name + ":" + value + ":" + idObject.type);
+
+    //Tool type update
+    if (name === "tool_type" && idObject.type === "toolTypeId") {
       console.log(idObject);
       //check if the tool type is in the editedToolType array
       if (!editedToolType.find((toolType) => toolType.id === idObject.id)) {
@@ -237,6 +236,8 @@ function page() {
           )
         );
       }
+
+      //tool update
     } else if (
       name === "tool_name" ||
       name === "part_number" ||
@@ -261,6 +262,8 @@ function page() {
           )
         );
       }
+
+      //quantity update
     } else if (
       name === "quantity_required" &&
       idObject.type === "quantityReqId"
@@ -407,12 +410,12 @@ function page() {
     for (let tool of editedTool) {
       try {
         //patch the tool
-        let test = await axios.patch(BASE_URL + "tools/" + tool.id + "/", tool);
-        console.log(test);
+        await axios.patch(BASE_URL + "tools/" + tool.id + "/", tool);
       } catch (err) {
         console.error(err);
       }
     }
+    console.log(editedToolType);
     for (let toolType of editedToolType) {
       try {
         await axios.patch(BASE_URL + "tool_types/" + toolType.id + "/", {
@@ -517,23 +520,17 @@ function page() {
   //delete items
   const handleDelete = () => {
     setIsDeleting(!isDeleting);
-  }
+  };
 
   const deleteItem = async (toolId) => {
     const deletedTool = await axios.delete(BASE_URL + `tools/${toolId}/`);
-    console.log(`${toolId} has been deleted`)
+    console.log(`${toolId} has been deleted`);
     fetchTools();
-  }
+  };
 
   return (
     <>
       <TheNav />
-      <label>Inactive tools (deletes after 30 days)</label>
-      <input
-        type="checkbox"
-        checked={showInactive}
-        onChange={(e) => setShowInactive(e.target.checked)}
-      />
       <Button
         onClick={makeTool}
         className="mt-3"
@@ -541,6 +538,21 @@ function page() {
       >
         Create New Tool
       </Button>
+      <div style={{ marginLeft: "3%" }}>
+        <label style={{ padding: "3px" }}>Inactive tools</label>
+        <input
+          type="checkbox"
+          checked={showInactive}
+          onChange={(e) => setShowInactive(e.target.checked)}
+        />
+        <span> | </span>
+        <label style={{ padding: "3px" }}>Tools Out for Service</label>
+        <input
+          type="checkbox"
+          checked={showServiceList}
+          onChange={(e) => setShowServiceList(e.target.checked)}
+        ></input>
+      </div>
       {toggle ? (
         <CreateNewTool getTools={fetchTools} toggler={makeTool} />
       ) : (
@@ -553,19 +565,27 @@ function page() {
           style={{ margin: "auto 50%" }}
         />
       ) : (
-        <ToolAccordion
-          toolList={tools}
-          newTool={addTool}
-          activeFilter={checkActive}
-          changeData={onChangeInput}
-          editing={Editing}
-          isEditing={isEditing}
-          readOnly={readOnly}
-          updateTools={updateTools}
-          isDeleting={isDeleting}
-          handleDelete={handleDelete}
-          deleteItem={deleteItem}
-        />
+        <>
+        <h3 style={{textAlign:"center"}}>Active Tools</h3>
+          <ToolAccordion
+            toolList={tools}
+            newTool={addTool}
+            activeFilter={checkActive}
+            changeData={onChangeInput}
+            editing={Editing}
+            isEditing={isEditing}
+            readOnly={readOnly}
+            updateTools={updateTools}
+            isDeleting={isDeleting}
+            handleDelete={handleDelete}
+            deleteItem={deleteItem}
+          />
+          {showServiceList ? (
+            <OutForService 
+            toolList={tools}
+            activeFilter={checkActive} />
+          ): <></>}
+        </>
       )}
     </>
   );
