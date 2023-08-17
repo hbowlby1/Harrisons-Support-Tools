@@ -95,7 +95,6 @@ function CreateNewTool(props) {
       [mainKey]: { ...prevInputs[mainKey], [subKey]: value },
     }));
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
