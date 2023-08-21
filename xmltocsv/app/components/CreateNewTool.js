@@ -148,34 +148,32 @@ function CreateNewTool(props) {
         inputs.tool.tool_name.trim().substr(0, 4).toUpperCase() + "00X";
       //gets the most recent tool serial of the tool class and adds 1 to it.
       let lastToolSerial;
+      //determines if a match has been found for the tool class
+      let foundMatch;
       if (toolClasses && toolClasses.length > 0) {
-        toolClasses.map(async (tool, index) => {
-          if (serial === (await tool["tool_class"])) {
-            try {
-              //create this url in the backend
-              let lastToolResponse = await axios
-                .get(BASE_URL + "tools/last/" + serial)
-                .then((res) => {
-                  console.log(res);
-                })
-                .catch((err) => {
-                  console.log(err);
-                });
-              let lastTool = lastToolResponse.data;
-              let lastToolArray = Object.keys(lastTool).map(
-                (lastToolId) => lastTool[lastToolId]
-              );
-              setLastTool(lastToolArray);
+        for (let index = 0; index < toolClasses[0].length; index++) {
+          const tool = toolClasses[0][index].tool_class;
 
+          if (serial === (tool)) {
+            foundMatch = true;
+            try {
+              
+              let lastToolResponse = await axios.get(
+                BASE_URL + "tools/last/" + serial
+              );
+              let newLastTool = lastToolResponse.data;
               //grab the tool serial, slice it, convert number to integer
               //add 1 to the number, convert back to string
               //combine number and string and set to new serial.
-              let serialNums = lastTool.tool_serial.slice(4);
-              let serialPrefix = lastTool.tool_serial.slice(0, 4);
+              let serialNums = newLastTool.tool_serial.slice(4);
+              console.log(`serial number: ${serialNums}`)
+              let serialPrefix = newLastTool.tool_serial.slice(0, 4);
+              console.log(`serial prefix: ${serialPrefix}`)
               let num = parseInt(serialNums, 10);
               num += 1;
               let newNumPart = num.toString().padStart(3, "0");
               lastToolSerial = serialPrefix + newNumPart;
+              console.log(`new serial: ${lastToolSerial}`)
               //end of serial generation
             } catch (err) {
               console.log(err);
@@ -189,20 +187,26 @@ function CreateNewTool(props) {
                 tool_requires_match: isRequiresMatchChecked,
               },
             };
+            console.log(newInputs);
+            //stops the loop when it finds the tool class
+            break;
           } else {
-            newInputs = {
-              ...inputs,
-              tool: {
-                ...inputs.tool,
-                tool_serial:
-                  inputs.tool.tool_name.trim().substr(0, 4).toUpperCase() +
-                  "001",
-                tool_has_half_life: isHalfLifeChecked,
-                tool_requires_match: isRequiresMatchChecked,
-              },
-            };
+            foundMatch = false;
           }
-        });
+        }
+        if(foundMatch === false){
+          newInputs = {
+            ...inputs,
+            tool: {
+              ...inputs.tool,
+              tool_serial:
+                inputs.tool.tool_name.trim().substr(0, 4).toUpperCase() +
+                "001",
+              tool_has_half_life: isHalfLifeChecked,
+              tool_requires_match: isRequiresMatchChecked,
+            },
+          };
+        }
       }
       let createdToolId;
 
