@@ -397,13 +397,13 @@ function ToolAccordion(props) {
                   Add Tool
                 </Button> */}
                 <Button variant="warning" onClick={props.editing}>
-                  Edit
+                  Quick Edit
                 </Button>
                 {props.isDeleting ? (
                   <Button onClick={props.handleDelete}>Done</Button>
                 ) : (
                   <Button variant="danger" onClick={props.handleDelete}>
-                    Delete
+                    Quick Delete
                   </Button>
                 )}
               </ButtonGroup>

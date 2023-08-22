@@ -204,9 +204,6 @@ function page() {
     //fetch the tools list as well
     fetchTools();
   };
-  const makeTool = () => {
-    setToggle(!toggle);
-  };
 
   //allows editing the tool information
   const Editing = () => {
@@ -535,8 +532,9 @@ function page() {
     <>
       <TheNav />
       <Button
-        onClick={makeTool}
+        onClick={() => setToggle(!toggle)}
         className="mt-3"
+        aria-controls="newToolForm"
         style={{ width: "50%", margin: "auto 25%" }}
       >
         Create New Tool
@@ -548,7 +546,7 @@ function page() {
           checked={showInactive}
           onChange={(e) => setShowInactive(e.target.checked)}
         />
-        <span> | </span>
+        <span> |</span>
         <label style={{ padding: "3px" }}>Tools Out for Service</label>
         <input
           type="checkbox"
@@ -557,7 +555,7 @@ function page() {
         ></input>
       </div>
       {toggle ? (
-        <CreateNewTool getTools={fetchTools} toggler={makeTool} />
+          <CreateNewTool getTools={fetchTools} id="newToolForm" />
       ) : (
         <></>
       )}

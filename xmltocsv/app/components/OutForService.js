@@ -10,7 +10,6 @@ function OutForService(props) {
   let rowData = props.toolList.map((tool) => {
     if (tool.tool_is_out_for_service) {
       // testList.push(tool);
-      console.log(tool);
       return (
         <tr key={tool.id}>
           <td>
