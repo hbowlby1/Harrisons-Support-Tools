@@ -18,6 +18,7 @@ import CreateNewTool from "../components/CreateNewTool";
 
 import { useState, useEffect } from "react";
 import OutForService from "../components/OutForService";
+import InactiveToolsList from "../components/InactiveToolsList";
 
 function page() {
   //set state for the tools
@@ -584,6 +585,11 @@ function page() {
           />
           {showServiceList ? (
             <OutForService toolList={tools} activeFilter={checkActive} />
+          ) : (
+            <></>
+          )}
+          {showInactive ? (
+            <InactiveToolsList toolList={tools} activeFilter={checkActive} />
           ) : (
             <></>
           )}
