@@ -41,3 +41,5 @@ migrations
 __pycache__
 #sql lite
 db.sqlite3
+
+../vscode

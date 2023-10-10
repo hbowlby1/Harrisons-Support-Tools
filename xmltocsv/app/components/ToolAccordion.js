@@ -40,7 +40,7 @@ function ToolAccordion(props) {
                 : tool.max_sharpen_set[0].times_sharpened ===
                   tool.max_sharpen_set[0].max_sharpen_amount - 1
                 ? closeToMax
-                : null
+                : ''
             }
           >
             {props.isDeleting ? (

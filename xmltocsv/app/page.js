@@ -26,7 +26,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Harrison's Support Tools</title>
+        <title>Harrison Support Tools</title>
         <meta
           property="og:title"
           content="Harrison's Support Tools"

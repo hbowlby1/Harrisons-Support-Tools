@@ -15,7 +15,8 @@ import Alert from "react-bootstrap/Alert";
 import validationSchemas from "./validations/validators";
 
 function CreateNewTool(props) {
-  const BASE_URL = "http://localhost:8000/tool/";
+  // const BASE_URL = "http://localhost:8000/tool/";
+  const BASE_URL = "http://admin.local:8000/tool/";
 
   const [inputs, setInputs] = useState({
     tool: {},
@@ -74,8 +75,10 @@ function CreateNewTool(props) {
 
   //checks if the url input already has the https:// or http:// if not, add it
   const addHttpsProtocol = (url) => {
-    if (!/^https?:\/\//i.test(url)) {
-      url = "https://" + url;
+    if (url !== null && url !== undefined && url !== ""){
+      if (!/^https?:\/\//i.test(url)) {
+        url = "https://" + url;
+    }
     }
     return url;
   };
@@ -150,10 +153,9 @@ function CreateNewTool(props) {
       let lastToolSerial;
       //determines if a match has been found for the tool class
       let foundMatch;
-      if (toolClasses && toolClasses.length > 0) {
+      if (toolClasses && toolClasses[0].length > 0) {
         for (let index = 0; index < toolClasses[0].length; index++) {
           const tool = toolClasses[0][index].tool_class;
-
           if (serial === (tool)) {
             foundMatch = true;
             try {
@@ -187,26 +189,37 @@ function CreateNewTool(props) {
                 tool_requires_match: isRequiresMatchChecked,
               },
             };
-            console.log(newInputs);
             //stops the loop when it finds the tool class
             break;
           } else {
             foundMatch = false;
+            if(foundMatch === false){
+              newInputs = {
+                ...inputs,
+                tool: {
+                  ...inputs.tool,
+                  tool_serial:
+                    inputs.tool.tool_name.trim().substr(0, 4).toUpperCase() +
+                    "001",
+                  tool_has_half_life: isHalfLifeChecked,
+                  tool_requires_match: isRequiresMatchChecked,
+                },
+              };
+          }
           }
         }
-        if(foundMatch === false){
-          newInputs = {
-            ...inputs,
-            tool: {
-              ...inputs.tool,
-              tool_serial:
-                inputs.tool.tool_name.trim().substr(0, 4).toUpperCase() +
-                "001",
-              tool_has_half_life: isHalfLifeChecked,
-              tool_requires_match: isRequiresMatchChecked,
-            },
-          };
-        }
+      }else{
+        newInputs = {
+          ...inputs,
+          tool: {
+            ...inputs.tool,
+            tool_serial:
+              inputs.tool.tool_name.trim().substr(0, 4).toUpperCase() +
+              "001",
+            tool_has_half_life: isHalfLifeChecked,
+            tool_requires_match: isRequiresMatchChecked,
+          },
+        };
       }
       let createdToolId;
 
@@ -385,7 +398,7 @@ function CreateNewTool(props) {
               ...newInputs.service,
             });
           }
-          props.toggler();
+          // props.toggler();
           props.getTools();
         } catch (error) {
           setShow(true);

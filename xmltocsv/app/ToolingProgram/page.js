@@ -12,13 +12,13 @@ import Button from "react-bootstrap/Button";
 
 //component imports
 import TheNav from "@/app/UI/theNav";
-import CreateNewTool from "../components/CreateNewTool";
 
 //css imports
 
 import { useState, useEffect } from "react";
 import OutForService from "../components/OutForService";
 import InactiveToolsList from "../components/InactiveToolsList";
+import CreateNewTool from "../components/CreateNewTool";
 
 function page() {
   //set state for the tools
@@ -47,7 +47,8 @@ function page() {
   let currentDate = date.toString();
 
   //set base URL to connect to backend for tools
-  const BASE_URL = "http://localhost:8000/tool/";
+  // const BASE_URL = "http://localhost:8000/tool/";
+  const BASE_URL = "http://admin.local:8000/tool/";
 
   useEffect(() => {
     fetchTools();
@@ -215,11 +216,9 @@ function page() {
   // on the main screen
   const onChangeInput = (e, toolId, idObject) => {
     const { name, value } = e.target;
-    console.log(name + ":" + value + ":" + idObject.type);
 
     //Tool type update
     if (name === "tool_type" && idObject.type === "toolTypeId") {
-      console.log(idObject);
       //check if the tool type is in the editedToolType array
       if (!editedToolType.find((toolType) => toolType.id === idObject.id)) {
         setEditedToolType((prevEditedToolType) => [
@@ -415,7 +414,6 @@ function page() {
         console.error(err);
       }
     }
-    console.log(editedToolType);
     for (let toolType of editedToolType) {
       try {
         await axios.patch(BASE_URL + "tool_types/" + toolType.id + "/", {
@@ -555,7 +553,7 @@ function page() {
         ></input>
       </div>
       {toggle ? (
-          <CreateNewTool getTools={fetchTools} id="newToolForm" />
+          <CreateNewTool getTools={fetchTools} id="newToolForm"/>
       ) : (
         <></>
       )}
