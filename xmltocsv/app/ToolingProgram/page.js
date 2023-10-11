@@ -19,6 +19,7 @@ import { useState, useEffect } from "react";
 import OutForService from "../components/OutForService";
 import InactiveToolsList from "../components/InactiveToolsList";
 import CreateNewTool from "../components/CreateNewTool";
+import Footer from "../components/Footer";
 
 function page() {
   //set state for the tools
@@ -591,6 +592,7 @@ function page() {
           )}
         </>
       )}
+      <Footer />
     </>
   );
 }
