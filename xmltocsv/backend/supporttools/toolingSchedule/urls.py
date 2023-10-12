@@ -9,7 +9,8 @@ from .views import (
     ToolTypeViewSet,
     MaxSharpenViewSet,
     ServiceViewSet,
-    SerialClassViewSet
+    SerialClassViewSet,
+    AppSuggestionsViewSet
 )
 
 
@@ -22,6 +23,7 @@ router.register('tool_types', ToolTypeViewSet)
 router.register('max_sharpens', MaxSharpenViewSet)
 router.register('services', ServiceViewSet)
 router.register('tool_class', SerialClassViewSet)
+router.register('app_suggestions', AppSuggestionsViewSet)
 
 urlpatterns = [
     # Other URL patterns

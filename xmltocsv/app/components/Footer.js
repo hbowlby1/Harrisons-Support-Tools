@@ -1,9 +1,10 @@
+import Link from 'next/link'
 import React from 'react'
 
 function Footer() {
   return (
     <>
-    <sub>Update road map coming soon</sub>
+    <Link href="/Feedback">Feedback</Link>
     </>
   )
 }

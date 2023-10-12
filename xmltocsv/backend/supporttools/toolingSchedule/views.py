@@ -8,10 +8,26 @@ from rest_framework.response import Response
 from rest_framework import authentication, permissions, status
 
 #serializers
-from .serializers import ToolSerializer, MachineSerializer, ManufacturerSerializer, QauntityRequirementsSerializer, ToolTypeSerializer, ServiceSerializer, SharpenSerializer, ToolSerialClassSerializer
+from .serializers import (ToolSerializer, 
+                          MachineSerializer, 
+                          ManufacturerSerializer, 
+                          QauntityRequirementsSerializer, 
+                          ToolTypeSerializer, 
+                          ServiceSerializer, 
+                          SharpenSerializer, 
+                          ToolSerialClassSerializer,
+                          AppSuggestionSerializer)
 
 #model imports
-from .models import Tool, Machine, Manufacturer, Quantity_Requirements, Tool_Type, Max_Sharpen, Service, ToolSerialClass
+from .models import (Tool, 
+                     Machine, 
+                     Manufacturer, 
+                     Quantity_Requirements, 
+                     Tool_Type, 
+                     Max_Sharpen, 
+                     Service, 
+                     ToolSerialClass,
+                     AppSuggestions)
 
 #Tool
 class ToolViewSet(viewsets.ModelViewSet):
@@ -55,3 +71,7 @@ class ServiceViewSet(viewsets.ModelViewSet):
 class SerialClassViewSet(viewsets.ModelViewSet):
     queryset = ToolSerialClass.objects.all()
     serializer_class = ToolSerialClassSerializer
+
+class AppSuggestionsViewSet(viewsets.ModelViewSet):
+    queryset = AppSuggestions.objects.all()
+    serializer_class = AppSuggestionSerializer
