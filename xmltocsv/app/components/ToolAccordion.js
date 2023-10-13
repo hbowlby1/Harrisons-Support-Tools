@@ -3,7 +3,6 @@ import Accordion from "react-bootstrap/Accordion";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
-import Container from "react-bootstrap/Container";
 
 // react imports
 import { useState } from "react";
@@ -41,7 +40,7 @@ function ToolAccordion(props) {
                 : tool.max_sharpen_set[0].times_sharpened ===
                   tool.max_sharpen_set[0].max_sharpen_amount - 1
                 ? closeToMax
-                : null
+                : ''
             }
           >
             {props.isDeleting ? (
@@ -398,13 +397,13 @@ function ToolAccordion(props) {
                   Add Tool
                 </Button> */}
                 <Button variant="warning" onClick={props.editing}>
-                  Edit
+                  Quick Edit
                 </Button>
                 {props.isDeleting ? (
                   <Button onClick={props.handleDelete}>Done</Button>
                 ) : (
                   <Button variant="danger" onClick={props.handleDelete}>
-                    Delete
+                    Quick Delete
                   </Button>
                 )}
               </ButtonGroup>

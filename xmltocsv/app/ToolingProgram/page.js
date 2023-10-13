@@ -12,12 +12,14 @@ import Button from "react-bootstrap/Button";
 
 //component imports
 import TheNav from "@/app/UI/theNav";
-import CreateNewTool from "../components/CreateNewTool";
 
 //css imports
 
 import { useState, useEffect } from "react";
 import OutForService from "../components/OutForService";
+import InactiveToolsList from "../components/InactiveToolsList";
+import CreateNewTool from "../components/CreateNewTool";
+import Footer from "../components/Footer";
 
 function page() {
   //set state for the tools
@@ -46,7 +48,8 @@ function page() {
   let currentDate = date.toString();
 
   //set base URL to connect to backend for tools
-  const BASE_URL = "http://localhost:8000/tool/";
+  // const BASE_URL = "http://localhost:8000/tool/";
+  const BASE_URL = "http://admin.local:8000/tool/";
 
   useEffect(() => {
     fetchTools();
@@ -76,6 +79,8 @@ function page() {
     }
   }, [isFetch]);
 
+  //checks if the out for service and active check boxes are set
+  //then updates the state varibles.
   const checkActive = async (e, toolId, isActive) => {
     const { name } = await e.target;
     if (name === "outForService") {
@@ -201,9 +206,6 @@ function page() {
     //fetch the tools list as well
     fetchTools();
   };
-  const makeTool = () => {
-    setToggle(!toggle);
-  };
 
   //allows editing the tool information
   const Editing = () => {
@@ -215,11 +217,9 @@ function page() {
   // on the main screen
   const onChangeInput = (e, toolId, idObject) => {
     const { name, value } = e.target;
-    console.log(name + ":" + value + ":" + idObject.type);
 
     //Tool type update
     if (name === "tool_type" && idObject.type === "toolTypeId") {
-      console.log(idObject);
       //check if the tool type is in the editedToolType array
       if (!editedToolType.find((toolType) => toolType.id === idObject.id)) {
         setEditedToolType((prevEditedToolType) => [
@@ -415,7 +415,6 @@ function page() {
         console.error(err);
       }
     }
-    console.log(editedToolType);
     for (let toolType of editedToolType) {
       try {
         await axios.patch(BASE_URL + "tool_types/" + toolType.id + "/", {
@@ -532,8 +531,9 @@ function page() {
     <>
       <TheNav />
       <Button
-        onClick={makeTool}
+        onClick={() => setToggle(!toggle)}
         className="mt-3"
+        aria-controls="newToolForm"
         style={{ width: "50%", margin: "auto 25%" }}
       >
         Create New Tool
@@ -545,7 +545,7 @@ function page() {
           checked={showInactive}
           onChange={(e) => setShowInactive(e.target.checked)}
         />
-        <span> | </span>
+        <span> |</span>
         <label style={{ padding: "3px" }}>Tools Out for Service</label>
         <input
           type="checkbox"
@@ -554,7 +554,7 @@ function page() {
         ></input>
       </div>
       {toggle ? (
-        <CreateNewTool getTools={fetchTools} toggler={makeTool} />
+          <CreateNewTool getTools={fetchTools} id="newToolForm"/>
       ) : (
         <></>
       )}
@@ -566,7 +566,7 @@ function page() {
         />
       ) : (
         <>
-        <h3 style={{textAlign:"center"}}>Active Tools</h3>
+          <h3 style={{ textAlign: "center" }}>Active Tools</h3>
           <ToolAccordion
             toolList={tools}
             newTool={addTool}
@@ -581,12 +581,18 @@ function page() {
             deleteItem={deleteItem}
           />
           {showServiceList ? (
-            <OutForService 
-            toolList={tools}
-            activeFilter={checkActive} />
-          ): <></>}
+            <OutForService toolList={tools} activeFilter={checkActive} />
+          ) : (
+            <></>
+          )}
+          {showInactive ? (
+            <InactiveToolsList toolList={tools} activeFilter={checkActive} />
+          ) : (
+            <></>
+          )}
         </>
       )}
+      <Footer />
     </>
   );
 }

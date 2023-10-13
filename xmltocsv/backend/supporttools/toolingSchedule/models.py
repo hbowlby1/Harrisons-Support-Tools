@@ -129,3 +129,11 @@ class ToolSerialClass(models.Model):
     
     def __str__(self):
         return self.tool_class
+    
+class AppSuggestions(models.Model):
+    suggestion = models.CharField(max_length=200, null=False, validators=[MinLengthValidator(4, "Must be 4 characters or more")])
+    completed = models.BooleanField(null=False, default=False)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.suggestion

@@ -1,5 +1,13 @@
 from rest_framework import serializers
-from .models import Tool, Machine, Manufacturer, Quantity_Requirements, Tool_Type, Max_Sharpen, Service, ToolSerialClass
+from .models import (Tool, 
+                     Machine, 
+                     Manufacturer, 
+                     Quantity_Requirements, 
+                     Tool_Type, 
+                     Max_Sharpen, 
+                     Service, 
+                     ToolSerialClass, 
+                     AppSuggestions)
 
 class MachineSerializer(serializers.ModelSerializer):
     tool_id = serializers.ReadOnlyField(source='tool.id')
@@ -53,4 +61,9 @@ class ToolSerializer(serializers.ModelSerializer):
     tool_serial_class = ToolSerialClassSerializer(read_only=True)
     class Meta:
         model = Tool
+        fields = "__all__"
+
+class AppSuggestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AppSuggestions
         fields = "__all__"

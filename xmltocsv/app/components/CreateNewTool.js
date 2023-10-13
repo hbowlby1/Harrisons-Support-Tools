@@ -1,5 +1,5 @@
 //react imports
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // axios imports
 import axios from "axios";
@@ -15,7 +15,8 @@ import Alert from "react-bootstrap/Alert";
 import validationSchemas from "./validations/validators";
 
 function CreateNewTool(props) {
-  const BASE_URL = "http://localhost:8000/tool/";
+  // const BASE_URL = "http://localhost:8000/tool/";
+  const BASE_URL = "http://admin.local:8000/tool/";
 
   const [inputs, setInputs] = useState({
     tool: {},
@@ -26,6 +27,7 @@ function CreateNewTool(props) {
     sharpen: {},
     service: {},
   });
+  const [lastTool, setLastTool] = useState([]);
 
   const [isHalfLifeChecked, setIsHalfLifeChecked] = useState(false);
   const [isRequiresMatchChecked, setIsRequiresMatchChecked] = useState(false);
@@ -33,6 +35,28 @@ function CreateNewTool(props) {
   const [displayError, setDisplayError] = useState("");
   const [show, setShow] = useState(false);
   const [validated, setValidated] = useState(false);
+  const [toolClasses, setToolClasses] = useState([]);
+
+  //get all the tool serial classes
+  const toolSerialRes = async () => {
+    try {
+      const response = await axios.get(BASE_URL + "tool_class/");
+      return response.data;
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    const getToolClasses = async () => {
+      const toolClassesData = await toolSerialRes();
+      let tempClasses = [];
+      tempClasses.push(toolClassesData);
+      setToolClasses(tempClasses);
+    };
+
+    getToolClasses();
+  }, []);
 
   const handleHalfLife = (e) => {
     if (e.target.checked) {
@@ -51,8 +75,10 @@ function CreateNewTool(props) {
 
   //checks if the url input already has the https:// or http:// if not, add it
   const addHttpsProtocol = (url) => {
-    if (!/^https?:\/\//i.test(url)) {
-      url = "https://" + url;
+    if (url !== null && url !== undefined && url !== ""){
+      if (!/^https?:\/\//i.test(url)) {
+        url = "https://" + url;
+    }
     }
     return url;
   };
@@ -61,7 +87,6 @@ function CreateNewTool(props) {
     let { name, value } = e.target;
     //adds https:// to the manufacturer website if it's present
     if (name === "manufacturer.manufacturer_website") {
-      console.log(value);
       value = addHttpsProtocol(value);
     }
     const nameParts = name.split("."); // we're assuming names will be like 'tool.tool_name', 'machine.machine_name', etc.
@@ -73,7 +98,6 @@ function CreateNewTool(props) {
       [mainKey]: { ...prevInputs[mainKey], [subKey]: value },
     }));
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -121,16 +145,82 @@ function CreateNewTool(props) {
       scrollToTop();
       return;
     } else {
-      const newInputs = {
-        ...inputs,
-        tool: {
-          ...inputs.tool,
-          tool_serial:
-            inputs.tool.tool_name.trim().substr(0, 4).toUpperCase() + "001",
-          tool_has_half_life: isHalfLifeChecked,
-          tool_requires_match: isRequiresMatchChecked,
-        },
-      };
+      let newInputs;
+      //determines if the tool class already exists and if does put it in that class
+      let serial =
+        inputs.tool.tool_name.trim().substr(0, 4).toUpperCase() + "00X";
+      //gets the most recent tool serial of the tool class and adds 1 to it.
+      let lastToolSerial;
+      //determines if a match has been found for the tool class
+      let foundMatch;
+      if (toolClasses && toolClasses[0].length > 0) {
+        for (let index = 0; index < toolClasses[0].length; index++) {
+          const tool = toolClasses[0][index].tool_class;
+          if (serial === (tool)) {
+            foundMatch = true;
+            try {
+              
+              let lastToolResponse = await axios.get(
+                BASE_URL + "tools/last/" + serial
+              );
+              let newLastTool = lastToolResponse.data;
+              //grab the tool serial, slice it, convert number to integer
+              //add 1 to the number, convert back to string
+              //combine number and string and set to new serial.
+              let serialNums = newLastTool.tool_serial.slice(4);
+              console.log(`serial number: ${serialNums}`)
+              let serialPrefix = newLastTool.tool_serial.slice(0, 4);
+              console.log(`serial prefix: ${serialPrefix}`)
+              let num = parseInt(serialNums, 10);
+              num += 1;
+              let newNumPart = num.toString().padStart(3, "0");
+              lastToolSerial = serialPrefix + newNumPart;
+              console.log(`new serial: ${lastToolSerial}`)
+              //end of serial generation
+            } catch (err) {
+              console.log(err);
+            }
+            newInputs = {
+              ...inputs,
+              tool: {
+                ...inputs.tool,
+                tool_serial: lastToolSerial,
+                tool_has_half_life: isHalfLifeChecked,
+                tool_requires_match: isRequiresMatchChecked,
+              },
+            };
+            //stops the loop when it finds the tool class
+            break;
+          } else {
+            foundMatch = false;
+            if(foundMatch === false){
+              newInputs = {
+                ...inputs,
+                tool: {
+                  ...inputs.tool,
+                  tool_serial:
+                    inputs.tool.tool_name.trim().substr(0, 4).toUpperCase() +
+                    "001",
+                  tool_has_half_life: isHalfLifeChecked,
+                  tool_requires_match: isRequiresMatchChecked,
+                },
+              };
+          }
+          }
+        }
+      }else{
+        newInputs = {
+          ...inputs,
+          tool: {
+            ...inputs.tool,
+            tool_serial:
+              inputs.tool.tool_name.trim().substr(0, 4).toUpperCase() +
+              "001",
+            tool_has_half_life: isHalfLifeChecked,
+            tool_requires_match: isRequiresMatchChecked,
+          },
+        };
+      }
       let createdToolId;
 
       //resets the validation errors
@@ -229,7 +319,6 @@ function CreateNewTool(props) {
 
       //start of post codes
       if (isValid) {
-        console.log(newInputs)
         try {
           if (newInputs.tool) {
             const toolRes = await axios.post(
@@ -239,65 +328,77 @@ function CreateNewTool(props) {
             createdToolId = toolRes.data.id;
           }
 
-          if (JSON.stringify(newInputs.sharpen) === "{}" || Object.keys(newInputs.sharpen).length >= 1) {
-            console.log('sharpen');
+          if (
+            JSON.stringify(newInputs.sharpen) === "{}" ||
+            Object.keys(newInputs.sharpen).length >= 1
+          ) {
             await axios.post(BASE_URL + "max_sharpens/", {
               times_sharpened: 0,
               max_sharpen_amount: 1,
               tool: createdToolId,
-              ...newInputs.sharpen
+              ...newInputs.sharpen,
             });
           }
 
-          if (JSON.stringify(newInputs.toolType) === "{}" || Object.keys(newInputs.toolType).length >= 1) {
-            console.log('toolType')
+          if (
+            JSON.stringify(newInputs.toolType) === "{}" ||
+            Object.keys(newInputs.toolType).length >= 1
+          ) {
             await axios.post(BASE_URL + "tool_types/", {
               tool_type: "None",
               tool: createdToolId,
-              ...newInputs.toolType
+              ...newInputs.toolType,
             });
           }
 
-          if (JSON.stringify(newInputs.machine) === "{}" || Object.keys(newInputs.machine).length >= 1) {
-            console.log("machine")
+          if (
+            JSON.stringify(newInputs.machine) === "{}" ||
+            Object.keys(newInputs.machine).length >= 1
+          ) {
             await axios.post(BASE_URL + "machines/", {
               machine_name: "Default",
               tool: createdToolId,
-              ...newInputs.machine
+              ...newInputs.machine,
             });
           }
 
-          if (JSON.stringify(newInputs.manufacturer) === "{}" || Object.keys(newInputs.manufacturer).length >= 1) {
-            console.log("manufacture")
+          if (
+            JSON.stringify(newInputs.manufacturer) === "{}" ||
+            Object.keys(newInputs.manufacturer).length >= 1
+          ) {
             await axios.post(BASE_URL + "manufacturers/", {
               manufacturer_name: "None",
               manufacturer_website: "https://www.test.com",
               manufacturer_vendor: "None",
               tool: createdToolId,
-              ...newInputs.manufacturer
+              ...newInputs.manufacturer,
             });
           }
 
-          if (JSON.stringify(newInputs.quantity) === "{}" || Object.keys(newInputs.quantity).length >= 1) {
-            console.log('quantity');
+          if (
+            JSON.stringify(newInputs.quantity) === "{}" ||
+            Object.keys(newInputs.quantity).length >= 1
+          ) {
             await axios.post(BASE_URL + "quantity_requirements/", {
               quantity_requested: 1,
               quantity_minimum: 0,
               tool: createdToolId,
-              ...newInputs.quantity
+              ...newInputs.quantity,
             });
           }
 
-          if (JSON.stringify(newInputs.service) === "{}" || Object.keys(newInputs.service).length >= 1) {
-            console.log('service');
+          if (
+            JSON.stringify(newInputs.service) === "{}" ||
+            Object.keys(newInputs.service).length >= 1
+          ) {
             await axios.post(BASE_URL + "services/", {
               time_to_change: false,
               tool_on_order: false,
               tool: createdToolId,
-              ...newInputs.service
+              ...newInputs.service,
             });
           }
-          props.toggler();
+          // props.toggler();
           props.getTools();
         } catch (error) {
           setShow(true);

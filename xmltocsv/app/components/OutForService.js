@@ -20,6 +20,7 @@ function OutForService(props) {
               onChange={(e) => props.activeFilter(e, tool.id, e.target.checked)}
             />
           </td>
+          <td>{tool.manufacturer_set[0].manufacturer_vendor}</td>
           <td>{tool.tool_name}</td>
           <td>{tool.tool_serial}</td>
           <td>{tool.tool_type_set[0].tool_type}</td>
@@ -38,6 +39,7 @@ function OutForService(props) {
         <thead>
           <tr>
             <th>Out For Service</th>
+            <th>Vendor</th>
             <th>Tool Name</th>
             <th>Serial number</th>
             <th>Tool Type</th>
