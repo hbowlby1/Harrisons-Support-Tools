@@ -1,3 +1,6 @@
+//next.js imports
+import Link from 'next/link';
+
 //bootstrap imports
 import Accordion from "react-bootstrap/Accordion";
 import Table from "react-bootstrap/Table";
@@ -73,7 +76,13 @@ function ToolAccordion(props) {
                   readOnly={props.readOnly}
                 />
               ) : (
-                tool.tool_name
+                <Link href={{
+                  pathname: "/ToolingProgram/Tool",
+                  query: {id: tool.id},
+                }}
+                >
+                  {tool.tool_name}
+                </Link>
               )}
             </td>
             <td>{tool.tool_serial}</td>
