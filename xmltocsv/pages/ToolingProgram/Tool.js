@@ -51,7 +51,6 @@ function Tool() {
   useEffect(() => {
     if (id) {
       getTools(id);
-      console.log(tool);
     }
   }, [id]);
 
@@ -296,6 +295,7 @@ function Tool() {
 
   //handle updating the tool active status, half life, out for service and matching tool
   const handleSliders = async (e) => {
+    console.log("hit")
     switch (e.target.id) {
       case "formActiveSlider":
         //update the tool active status

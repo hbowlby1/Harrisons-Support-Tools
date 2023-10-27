@@ -1,0 +1,15 @@
+.searchBar{
+    display: inline;
+    width: 250px;
+    margin-right: 2%;
+}
+
+.img{
+    display:inline;
+    border-top: 1px solid #dee2e6;
+    border-left: 1px solid #dee2e6;
+    border-bottom: 1px solid #dee2e6;
+    border-right: 0;
+    border-radius: 5px;
+    margin-right:4px;
+}

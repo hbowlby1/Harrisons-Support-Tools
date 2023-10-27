@@ -12,6 +12,7 @@ import Button from "react-bootstrap/Button";
 
 //component imports
 import TheNav from "@/app/UI/theNav";
+import ToolSearch from "../components/ToolSearch";
 
 //css imports
 
@@ -24,6 +25,7 @@ import Footer from "../components/Footer";
 function page() {
   //set state for the tools
   const [tools, setTools] = useState([]);
+  const [filteredTools, setFilteredTools] = useState([]);
   const [isFetch, setIsFetch] = useState(false);
   const [lastTool, setLastTool] = useState([]);
   const [toggle, setToggle] = useState(false);
@@ -42,6 +44,7 @@ function page() {
   const [editedSharpen, setEditedSharpen] = useState([]);
   const [editedMaxSharpen, setEditedMaxSharpen] = useState([]);
   const [showServiceList, setShowServiceList] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
 
   //get the current date
   const date = new Date();
@@ -527,9 +530,21 @@ function page() {
     fetchTools();
   };
 
+  //filter items by search
+  useEffect(() => {
+    const result = tools.filter(tool => tool.tool_name.toLowerCase().includes(searchValue.toLowerCase()));
+    setFilteredTools(result);
+}, [tools, searchValue]);
+
+
+  const filterToolsHandler = (e) => {
+    setSearchValue(e.target.value);
+  }
+
   return (
     <>
       <TheNav />
+      
       <Button
         onClick={() => setToggle(!toggle)}
         className="mt-3"
@@ -567,8 +582,9 @@ function page() {
       ) : (
         <>
           <h3 style={{ textAlign: "center" }}>Active Tools</h3>
+          <ToolSearch searchValue={filterToolsHandler}/>
           <ToolAccordion
-            toolList={tools}
+            toolList={searchValue !== "" ? filteredTools : tools}
             newTool={addTool}
             activeFilter={checkActive}
             changeData={onChangeInput}
