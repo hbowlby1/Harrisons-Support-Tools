@@ -1,12 +1,16 @@
-import Link from 'next/link'
-import React from 'react'
+import Link from "next/link";
+import React from "react";
 
 function Footer() {
   return (
-    <>
-    <Link href="/Feedback">Feedback</Link>
-    </>
-  )
+    <footer className="ms-5">
+      <Link href="/Feedback">Feedback</Link>
+
+      <span> / </span>
+
+      <Link href="/Roadmap">Roadmap </Link>
+    </footer>
+  );
 }
 
-export default Footer
+export default Footer;

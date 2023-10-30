@@ -1,0 +1,45 @@
+.center{
+    margin: 0 auto;
+    width: 50%;
+    text-align: center;
+}
+
+.homeButton{
+    background-color: gray;
+    display: inline-block;
+    color:antiquewhite;
+    text-decoration: none;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 10px;
+}
+.homeButton:hover{
+    color: black;
+}
+
+.backArrow{
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.customLabel {
+    width: 250px; /* Adjust this width according to your needs */
+    display: inline-block;
+    text-align: right; 
+    margin-right: 10px; /* Space between label and input */
+}
+
+.customInput {
+    width: 300px; /* Adjust this width based on the longest span's width */
+    display: inline-block;
+}
+
+.updateBtn{
+    display: block;
+    margin: 0 auto;
+}
+
+.formBlk{
+    max-width: 75%;
+    margin: 0 auto;
+}
