@@ -16,7 +16,8 @@ import validationSchemas from "./validations/validators";
 
 function CreateNewTool(props) {
   // const BASE_URL = "http://localhost:8000/tool/";
-  const BASE_URL = "http://admin.local:8000/tool/";
+  // const BASE_URL = "http://admin.local:8000/tool/";
+  const BASE_URL = "http://supporttools.local:8000/tool/"
 
   const [inputs, setInputs] = useState({
     tool: {},

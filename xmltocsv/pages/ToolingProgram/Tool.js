@@ -33,13 +33,15 @@ function Tool() {
   const router = useRouter();
   const { id } = router.query;
 
+  const BASE_URL = "http://supporttools.local:8000/tool/";
+
   //grab the tool from the database and display the tool information matching the id
   const getTools = async (id) => {
     try {
       //checks if the ID exists first before grabbing tool
       if (id) {
         const response = await axios.get(
-          `http://admin.local:8000/tool/tools/${id}`
+          `${BASE_URL}tools/${id}`
         );
         setTool(response.data);
       }
@@ -299,23 +301,23 @@ function Tool() {
     switch (e.target.id) {
       case "formActiveSlider":
         //update the tool active status
-        await axios.patch(`http://admin.local:8000/tool/tools/${id}`, {
+        await axios.patch(`${BASE_URL}/tools/${id}`, {
           tool_is_active: e.target.checked,
         });
         break;
       case "formHalfLife":
-        await axios.patch(`http://admin.local:8000/tool/tools/${id}`, {
+        await axios.patch(`${BASE_URL}tools/${id}`, {
           tool_has_half_life: e.target.checked,
         });
         break;
       case "formHasToolMatch":
-        await axios.patch(`http://admin.local:8000/tool/tools/${id}`, {
+        await axios.patch(`${BASE_URL}tools/${id}`, {
           tool_requires_match: e.target.checked,
         });
 
         break;
       case "formOutForService":
-        await axios.patch(`http://admin.local:8000/tool/tools/${id}`, {
+        await axios.patch(`${BASE_URL}tools/${id}`, {
           tool_is_out_for_service: e.target.checked,
         });
         break;
@@ -345,7 +347,7 @@ function Tool() {
       switch (item) {
         case "toolName":
           try {
-            await axios.patch(`http://admin.local:8000/tool/tools/${id}`, {
+            await axios.patch(`${BASE_URL}tools/${id}`, {
               tool_name: data.toolName,
             });
           } catch (err) {
@@ -355,7 +357,7 @@ function Tool() {
 
         case "partNumber":
           try {
-            await axios.patch(`http://admin.local:8000/tool/tools/${id}`, {
+            await axios.patch(`${BASE_URL}tools/${id}`, {
               part_number: data.partNumber,
             });
           } catch (err) {
@@ -365,7 +367,7 @@ function Tool() {
 
         case "toolQuantity":
           try {
-            await axios.patch(`http://admin.local:8000/tool/tools/${id}`, {
+            await axios.patch(`${BASE_URL}tools/${id}`, {
               tool_quantity: parseInt(data.toolQuantity),
             });
           } catch (err) {
@@ -377,7 +379,7 @@ function Tool() {
           //get the quantity requirements set id
           try {
             await axios.patch(
-              `http://admin.local:8000/tool/quantity_requirements/${quantityRequirementsSetId}`,
+              `${BASE_URL}quantity_requirements/${quantityRequirementsSetId}`,
               {
                 quantity_requested: parseInt(data.requiredQuantity),
               }
@@ -391,7 +393,7 @@ function Tool() {
           //get the quantity requirements set id
           try {
             await axios.patch(
-              `http://admin.local:8000/tool/quantity_requirements/${quantityRequirementsSetId}`,
+              `${BASE_URL}quantity_requirements/${quantityRequirementsSetId}`,
               {
                 quantity_minimum: parseInt(data.minQuantity),
               }
@@ -404,7 +406,7 @@ function Tool() {
         case "manuName":
           try {
             await axios.patch(
-              `http://admin.local:8000/tool/manufacturers/${manufacturerSetId}`,
+              `${BASE_URL}manufacturers/${manufacturerSetId}`,
               {
                 manufacturer_name: data.manuName,
               }
@@ -417,7 +419,7 @@ function Tool() {
         case "manuWebsite":
           try {
             await axios.patch(
-              `http://admin.local:8000/tool/manufacturers/${manufacturerSetId}`,
+              `${BASE_URL}manufacturers/${manufacturerSetId}`,
               {
                 manufacturer_website: data.manuWebsite,
               }
@@ -430,7 +432,7 @@ function Tool() {
         case "vendorName":
           try {
             await axios.patch(
-              `http://admin.local:8000/tool/manufacturers/${manufacturerSetId}`,
+              `${BASE_URL}manufacturers/${manufacturerSetId}`,
               {
                 manufacturer_vendor: data.vendorName,
               }
@@ -443,7 +445,7 @@ function Tool() {
         case "machineName":
           try {
             await axios.patch(
-              `http://admin.local:8000/tool/machines/${machineSetId}`,
+              `${BASE_URL}machines/${machineSetId}`,
               {
                 machine_name: data.machineName,
               }
@@ -456,7 +458,7 @@ function Tool() {
         case "toolType":
           try {
             await axios.patch(
-              `http://admin.local:8000/tool/tool_types/${toolTypeSetId}`,
+              `${BASE_URL}tool_types/${toolTypeSetId}`,
               {
                 tool_type: data.toolType,
               }
@@ -469,7 +471,7 @@ function Tool() {
         case "timesSharpened":
           try {
             await axios.patch(
-              `http://admin.local:8000/tool/max_sharpens/${maxSharpenSetId}`,
+              `${BASE_URL}max_sharpens/${maxSharpenSetId}`,
               {
                 times_sharpened: parseInt(data.timesSharpened),
               }
@@ -482,7 +484,7 @@ function Tool() {
         case "maxSharpen":
           try {
             await axios.patch(
-              `http://admin.local:8000/tool/max_sharpens/${maxSharpenSetId}`,
+              `${BASE_URL}max_sharpens/${maxSharpenSetId}`,
               {
                 max_sharpen_amount: parseInt(data.maxSharpen),
               }
@@ -494,7 +496,7 @@ function Tool() {
 
         case "halfLifeNum":
           try {
-            await axios.patch(`http://admin.local:8000/tool/tools/${id}`, {
+            await axios.patch(`${BASE_URL}tools/${id}`, {
               tool_half_life_quantity: parseInt(data.halfLifeNum),
             });
             break;
@@ -504,7 +506,7 @@ function Tool() {
 
         case "matchingToolName":
           try {
-            await axios.patch(`http://admin.local:8000/tool/tools/${id}`, {
+            await axios.patch(`${BASE_URL}tools/${id}`, {
               tool_match: data.matchingToolName,
             });
             break;
