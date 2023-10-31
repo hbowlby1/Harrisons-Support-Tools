@@ -27,8 +27,8 @@ import {
 
 function Tool() {
   const [tool, setTool] = useState({});
-  // const [changes, setChanges] = useState({});
   const { register, handleSubmit } = useForm();
+
   //obtain the query parameter from the URL
   const router = useRouter();
   const { id } = router.query;
@@ -56,6 +56,19 @@ function Tool() {
       getTools(id);
     }
   }, [id]);
+
+  //check if the tool is active and if not, display a message
+  const RenderActive = () => {
+    return (
+      <FormCheck
+      type="switch"
+      defaultChecked={tool.tool_is_active}
+      onChange={(e) => handleSliders(e)}
+      id="formActiveSlider"
+      className="mb-3 mx-auto my-auto"
+    />
+    )
+  }
 
   //check if item sets are null and if not, load them.
   //machine
@@ -302,7 +315,7 @@ function Tool() {
     switch (e.target.id) {
       case "formActiveSlider":
         //update the tool active status
-        await axios.patch(`${BASE_URL}/tools/${id}`, {
+        await axios.patch(`${BASE_URL}tools/${id}`, {
           tool_is_active: e.target.checked,
         });
         break;
@@ -537,13 +550,7 @@ function Tool() {
               <span className={customLabel}>Is Tool Active?</span>
             </Col>
             <Col>
-              <FormCheck
-                type="switch"
-                defaultChecked={tool.tool_is_active}
-                onChange={(e) => handleSliders(e)}
-                id="formActiveSlider"
-                className="mb-3 mx-auto my-auto"
-              />
+              <RenderActive />
             </Col>
             <Col>
               <span>{tool.tool_is_active ? "Yes" : "No"}</span>

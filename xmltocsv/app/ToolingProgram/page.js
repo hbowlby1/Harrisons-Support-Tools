@@ -552,7 +552,7 @@ function page() {
         aria-controls="newToolForm"
         style={{ width: "50%", margin: "auto 25%" }}
       >
-        Create New Tool
+        {toggle ? "Close" : "Create New Tool"}
       </Button>
       <div style={{ marginLeft: "3%" }}>
         <label style={{ padding: "3px" }}>Inactive tools</label>
@@ -570,7 +570,7 @@ function page() {
         ></input>
       </div>
       {toggle ? (
-          <CreateNewTool getTools={fetchTools} id="newToolForm"/>
+          <CreateNewTool setToggle={setToggle} getTools={fetchTools} id="newToolForm"/>
       ) : (
         <></>
       )}
