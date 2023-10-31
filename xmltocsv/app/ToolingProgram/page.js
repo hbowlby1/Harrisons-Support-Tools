@@ -52,8 +52,8 @@ function page() {
 
   //set base URL to connect to backend for tools
   // const BASE_URL = "http://localhost:8000/tool/";
-  // const BASE_URL = "http://admin.local:8000/tool/";
-  const BASE_URL = "http://supporttools.local:8000/tool/";
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+  // const BASE_URL = "http://supporttools.local:8000/tool/";
 
   useEffect(() => {
     fetchTools();

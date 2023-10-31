@@ -33,7 +33,8 @@ function Tool() {
   const router = useRouter();
   const { id } = router.query;
 
-  const BASE_URL = "http://supporttools.local:8000/tool/";
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+  // const BASE_URL = "http://supporttools.local:8000/tool/";
 
   //grab the tool from the database and display the tool information matching the id
   const getTools = async (id) => {
