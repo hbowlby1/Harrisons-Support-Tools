@@ -16,7 +16,8 @@ import validationSchemas from "./validations/validators";
 
 function CreateNewTool(props) {
   // const BASE_URL = "http://localhost:8000/tool/";
-  const BASE_URL = "http://admin.local:8000/tool/";
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+  // const BASE_URL = "http://supporttools.local:8000/tool/"
 
   const [inputs, setInputs] = useState({
     tool: {},
@@ -75,10 +76,10 @@ function CreateNewTool(props) {
 
   //checks if the url input already has the https:// or http:// if not, add it
   const addHttpsProtocol = (url) => {
-    if (url !== null && url !== undefined && url !== ""){
+    if (url !== null && url !== undefined && url !== "") {
       if (!/^https?:\/\//i.test(url)) {
         url = "https://" + url;
-    }
+      }
     }
     return url;
   };
@@ -156,10 +157,9 @@ function CreateNewTool(props) {
       if (toolClasses && toolClasses[0].length > 0) {
         for (let index = 0; index < toolClasses[0].length; index++) {
           const tool = toolClasses[0][index].tool_class;
-          if (serial === (tool)) {
+          if (serial === tool) {
             foundMatch = true;
             try {
-              
               let lastToolResponse = await axios.get(
                 BASE_URL + "tools/last/" + serial
               );
@@ -168,14 +168,11 @@ function CreateNewTool(props) {
               //add 1 to the number, convert back to string
               //combine number and string and set to new serial.
               let serialNums = newLastTool.tool_serial.slice(4);
-              console.log(`serial number: ${serialNums}`)
               let serialPrefix = newLastTool.tool_serial.slice(0, 4);
-              console.log(`serial prefix: ${serialPrefix}`)
               let num = parseInt(serialNums, 10);
               num += 1;
               let newNumPart = num.toString().padStart(3, "0");
               lastToolSerial = serialPrefix + newNumPart;
-              console.log(`new serial: ${lastToolSerial}`)
               //end of serial generation
             } catch (err) {
               console.log(err);
@@ -193,7 +190,7 @@ function CreateNewTool(props) {
             break;
           } else {
             foundMatch = false;
-            if(foundMatch === false){
+            if (foundMatch === false) {
               newInputs = {
                 ...inputs,
                 tool: {
@@ -205,17 +202,16 @@ function CreateNewTool(props) {
                   tool_requires_match: isRequiresMatchChecked,
                 },
               };
-          }
+            }
           }
         }
-      }else{
+      } else {
         newInputs = {
           ...inputs,
           tool: {
             ...inputs.tool,
             tool_serial:
-              inputs.tool.tool_name.trim().substr(0, 4).toUpperCase() +
-              "001",
+              inputs.tool.tool_name.trim().substr(0, 4).toUpperCase() + "001",
             tool_has_half_life: isHalfLifeChecked,
             tool_requires_match: isRequiresMatchChecked,
           },
@@ -398,7 +394,14 @@ function CreateNewTool(props) {
               ...newInputs.service,
             });
           }
-          // props.toggler();
+          props.setToggle(false);
+          setInputs({tool: {},
+            machine: {},
+            manufacturer: {},
+            quantity: {},
+            toolType: {},
+            sharpen: {},
+            service: {},})
           props.getTools();
         } catch (error) {
           setShow(true);
@@ -418,7 +421,6 @@ function CreateNewTool(props) {
       behavior: "smooth",
     });
   };
-
   return (
     <Container>
       <Alert
@@ -723,7 +725,10 @@ function CreateNewTool(props) {
             )}
           </Form.Group>
         </fieldset>
-        <Button type="submit">Add Tool</Button>
+        <Button
+          type="submit">
+          Add Tool
+        </Button>
       </Form>
     </Container>
   );

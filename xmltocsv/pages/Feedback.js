@@ -8,7 +8,8 @@ import axios from "axios";
 export default function Feedback() {
   const [suggestion, setSuggestion] = useState("");
   const [userFeedback, setUserFeedBack] = useState([]);
-  const BASE_URL = "http://admin.local:8000/tool/";
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+  // const BASE_URL = "http://supporttools.local:8000/tool/"
 
   //loads userfeedback from the database
   const loadFeedback = async () => {
