@@ -177,14 +177,27 @@ function ToolAccordion(props) {
               )}
             </td>
             <td>
-              <input
-                type="checkbox"
-                defaultChecked={tool.tool_is_out_for_service}
-                name="outForService"
-                onChange={(e) =>
-                  props.activeFilter(e, tool.id, e.target.checked)
+              {tool.max_sharpen_set[0]?.times_sharpened >= tool.max_sharpen_set[0]?.max_sharpen_amount ? (
+                <Button
+                size="sm"
+                onClick={(e) =>
+                  {
+                    props.activeFilter(e, tool.id, false)
+                  }
                 }
-              />
+                name="isActive">
+                  Inactivate?
+                </Button>
+              ) : (
+                <input
+                  type="checkbox"
+                  defaultChecked={tool.tool_is_out_for_service}
+                  name="outForService"
+                  onChange={(e) =>
+                    props.activeFilter(e, tool.id, true)
+                  }
+                />
+              )}
             </td>
             <td>
               {props.isEditing ? (
