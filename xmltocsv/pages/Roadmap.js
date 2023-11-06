@@ -26,7 +26,8 @@ function Roadmap() {
                 <ListGroup.Item className="">*optional* set up themes (light, dark, forest)</ListGroup.Item>
                 <ListGroup.Item className="">set up error handling to notify me when an error occurs in the database or backend</ListGroup.Item>
                 <ListGroup.Item className="">Make the mobile view more user friendly</ListGroup.Item>
-                <ListGroup.Item className="">Update main page to use datagrids</ListGroup.Item>
+                <ListGroup.Item className="">Fix bug where the tool list does not update after updating tool is out for service</ListGroup.Item>
+                <ListGroup.Item className="">update matching tool to be a typeable select dropdown that lists all of the tools</ListGroup.Item>
               </ListGroup>
             </Card.Body>
           </Card>
@@ -34,8 +35,7 @@ function Roadmap() {
             <Card.Body>
               <Card.Title>In Progress</Card.Title>
               <ListGroup>
-                <ListGroup.Item className="">Fix bug where the tool list does not update after updating tool is out for service</ListGroup.Item>
-                <ListGroup.Item className="">update matching tool to be a typeable select dropdown that lists all of the tools</ListGroup.Item>
+                <ListGroup.Item className="">Update main page to use datagrids</ListGroup.Item>
               </ListGroup>
             </Card.Body>
           </Card>
@@ -59,7 +59,7 @@ function Roadmap() {
               <ListGroup.Item className="">Inputs reset after tool update and or tool entry</ListGroup.Item>
               <ListGroup.Item className="">Fix bug where the tool entry drop down does not close after entering tool</ListGroup.Item>
               <ListGroup.Item className="">When tools hit their maximum sharpen set them to inactive automatically</ListGroup.Item>
-              <ListGroup.Item className="">Change the checkbox of the out for service to a button when the times sharpened = max sharpen that when clicked activates the tool's inactivity</ListGroup.Item>
+              <ListGroup.Item className="">Change the checkbox of the out for service to a button when the times sharpened is max sharpen that when clicked activates the tools inactivity</ListGroup.Item>
               </ListGroup>
             </Card.Body>
           </Card>
