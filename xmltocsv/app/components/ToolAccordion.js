@@ -7,6 +7,9 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 
+//components
+import MatchingTool from "./MatchingTool";
+
 // react imports
 import { useState } from "react";
 
@@ -177,14 +180,27 @@ function ToolAccordion(props) {
               )}
             </td>
             <td>
-              <input
-                type="checkbox"
-                defaultChecked={tool.tool_is_out_for_service}
-                name="outForService"
-                onChange={(e) =>
-                  props.activeFilter(e, tool.id, e.target.checked)
+              {tool.max_sharpen_set[0]?.times_sharpened >= tool.max_sharpen_set[0]?.max_sharpen_amount ? (
+                <Button
+                size="sm"
+                onClick={(e) =>
+                  {
+                    props.activeFilter(e, tool.id, false)
+                  }
                 }
-              />
+                name="isActive">
+                  Inactivate?
+                </Button>
+              ) : (
+                <input
+                  type="checkbox"
+                  defaultChecked={tool.tool_is_out_for_service}
+                  name="outForService"
+                  onChange={(e) =>
+                    props.activeFilter(e, tool.id, true)
+                  }
+                />
+              )}
             </td>
             <td>
               {props.isEditing ? (
@@ -299,7 +315,7 @@ function ToolAccordion(props) {
               />
             </td>
             <td>
-              {props.isEditing && tool.tool_requires_match ? (
+              {/* {props.isEditing && tool.tool_requires_match ? (
                 <input
                   name="tool_match"
                   type="text"
@@ -315,7 +331,8 @@ function ToolAccordion(props) {
                 tool.tool_match
               ) : (
                 "None"
-              )}
+              )} */}
+              <MatchingTool tool={props.toolList} />
             </td>
             <td>
               <input

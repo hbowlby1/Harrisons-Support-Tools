@@ -9,6 +9,9 @@ function Footer() {
       <span> / </span>
 
       <Link href="/Roadmap">Roadmap </Link>
+
+      <span> / </span>
+      <Link href={{ pathname: "DataGridVer/page"}}>New Version</Link>
     </footer>
   );
 }

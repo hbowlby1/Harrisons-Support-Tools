@@ -56,12 +56,17 @@ class Tool(models.Model):
         if(self.tool_is_out_for_service and not self._tool_is_out_for_service_orig):
             #try to get the latest sharpen record
             print("hit")
-            try:
-                max_sharpen = self.max_sharpen_set.latest('id')
-                max_sharpen.times_sharpened += 1
-                max_sharpen.save()
-            except Max_Sharpen.DoesNotExist:
-                pass
+            max_sharpen = self.max_sharpen_set.latest('id')
+            print(max_sharpen.times_sharpened)
+            if((max_sharpen.times_sharpened >= max_sharpen.max_sharpen_amount) and self.tool_is_out_for_service):
+                print("Updated to inactive")
+                self.tool_is_active = False
+            else:
+                try:
+                    max_sharpen.times_sharpened += 1
+                    max_sharpen.save()
+                except Max_Sharpen.DoesNotExist:
+                    pass
 
         #Save the tool first so the foreign key relations are fulfilled
         super(Tool, self).save(*args, **kwargs)
